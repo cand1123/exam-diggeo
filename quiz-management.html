@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujian Online CBT</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for the page */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #add-question-form-container {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-2 sm:p-3 md:p-4 max-w-7xl">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg rounded-lg mb-4">
+            <div class="max-w-7xl mx-auto px-3">
+                <div class="flex justify-between items-center py-2">
+                    <div class="flex items-center space-x-6">
+                        <a href="quiz-management.html" class="text-blue-600 font-semibold border-b-2 border-blue-600 pb-1 text-sm">Manajemen Quiz</a>
+                        <a href="user-mangement.html" class="text-gray-600 hover:text-blue-600 font-medium transition-colors text-sm">Manajemen Pengguna</a>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <a href="mode-admin.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg transition-colors duration-200 flex items-center text-sm">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                            Kembali ke Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Header -->
+        <header class="text-left mb-4">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Manajemen Quiz</h1>
+            <p class="text-gray-600 mt-1 text-sm">Kelola soal ujian dan pertanyaan.</p>
+        </header>
+
+                          <!-- Add Question Modal (Hidden by default) -->
+         <div id="add-question-form-container" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+             <div class="relative top-20 mx-auto p-4 border w-11/12 md:w-2/3 lg:w-1/3 shadow-lg rounded-md bg-white text-sm">
+                 <div class="mt-3">
+                     <div class="flex justify-between items-center mb-4">
+                         <h3 class="text-xl font-bold text-gray-900">Tambah Soal Baru</h3>
+                         <button id="close-add-modal" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+                     </div>
+                     <form id="add-question-form" class="space-y-4">
+                         <div>
+                             <label for="case-description" class="block text-xs font-medium text-gray-700">Deskripsi Kasus (Opsional)</label>
+                             <textarea id="case-description" rows="3" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs" placeholder="Jelaskan sebuah skenario atau kasus yang berkaitan dengan pertanyaan ini..."></textarea>
+                         </div>
+                         <div>
+                             <label for="question-text" class="block text-xs font-medium text-gray-700">Teks Pertanyaan</label>
+                             <textarea id="question-text" rows="2" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs" required></textarea>
+                         </div>
+                         <div>
+                             <label for="question-type" class="block text-xs font-medium text-gray-700">Tipe Soal</label>
+                             <select id="question-type" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs">
+                                 <option value="multiple_choice">Pilihan Ganda</option>
+                                 <option value="true_false">Benar/Salah</option>
+                                 <option value="short_answer">Isian Singkat</option>
+                                 <option value="matching">Menjodohkan</option>
+                             </select>
+                         </div>
+                         <!-- Dynamic fields for options and answers will be inserted here -->
+                         <div id="dynamic-fields-container" class="space-y-3"></div>
+                         
+                         <div class="flex justify-end space-x-3">
+                             <button type="button" id="cancel-add-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-3 rounded text-sm">Batal</button>
+                             <button type="submit" id="save-question-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm">Simpan Soal</button>
+                         </div>
+                         <p id="form-status" class="text-sm text-center"></p>
+                     </form>
+                 </div>
+             </div>
+         </div>
+
+                          <!-- Edit Question Modal (Hidden by default) -->
+         <div id="edit-question-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+             <div class="relative top-20 mx-auto p-4 border w-11/12 md:w-2/3 lg:w-1/3 shadow-lg rounded-md bg-white text-sm">
+                 <div class="mt-3">
+                     <div class="flex justify-between items-center mb-4">
+                         <h3 class="text-xl font-bold text-gray-900">Edit Soal</h3>
+                         <button id="close-edit-modal" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+                     </div>
+                     
+                     <form id="edit-question-form" class="space-y-4">
+                        <input type="hidden" id="edit-question-index">
+                        
+                                                 <div>
+                             <label for="edit-case-description" class="block text-xs font-medium text-gray-700">Deskripsi Kasus (Opsional)</label>
+                             <textarea id="edit-case-description" rows="3" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs" placeholder="Jelaskan sebuah skenario atau kasus yang berkaitan dengan pertanyaan ini..."></textarea>
+                         </div>
+                         
+                         <div>
+                             <label for="edit-question-text" class="block text-xs font-medium text-gray-700">Teks Pertanyaan</label>
+                             <textarea id="edit-question-text" rows="2" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs" required></textarea>
+                         </div>
+                         
+                         <div>
+                             <label for="edit-question-type" class="block text-xs font-medium text-gray-700">Tipe Soal</label>
+                             <select id="edit-question-type" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs">
+                                <option value="multiple_choice">Pilihan Ganda</option>
+                                <option value="true_false">Benar/Salah</option>
+                                <option value="short_answer">Isian Singkat</option>
+                                <option value="matching">Menjodohkan</option>
+                            </select>
+                        </div>
+                        
+                                                 <!-- Dynamic fields for edit form -->
+                         <div id="edit-dynamic-fields-container" class="space-y-3"></div>
+                        
+                                                 <div class="flex justify-end space-x-3">
+                             <button type="button" id="cancel-edit-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-3 rounded text-sm">Batal</button>
+                             <button type="submit" id="update-question-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm">Update Soal</button>
+                         </div>
+                        
+                        <p id="edit-form-status" class="text-sm text-center"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main id="exam-container" class="bg-white p-4 sm:p-6 rounded-xl shadow-lg">
+            <!-- Add Question Button -->
+            <div class="text-center mb-6">
+                <button id="show-add-form-btn" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
+                    + Tambah Soal Baru
+                </button>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="loading" class="text-center py-10">
+                <svg class="animate-spin h-8 w-8 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="mt-4 text-gray-600">Memuat soal...</p>
+            </div>
+
+            <!-- Questions will be inserted here by JavaScript -->
+            <div id="questions-container" class="space-y-8"></div>
+
+
+
+            <!-- Result Display -->
+            <div id="result-container" class="text-center py-10 hidden">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-gray-900">Hasil Ujian Anda</h2>
+                <div id="score" class="text-4xl sm:text-5xl font-bold text-blue-600 bg-blue-50 p-6 rounded-full inline-block"></div>
+                <p id="score-details" class="mt-4 text-lg text-gray-700"></p>
+                <button id="restart-btn" class="mt-8 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition-transform transform hover:scale-105">
+                    Ulangi Ujian
+                </button>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center mt-auto pt-8 text-gray-500 text-sm">
+            <p>&copy; 2024 Platform Ujian CBT</p>
+        </footer>
+    </div>
+
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // Your web app's Firebase configuration (UPDATED)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzHFkgvotq8qb7oC81jDl-WyMgvDgRgyw",
+            authDomain: "exam2-df73d.firebaseapp.com",
+            databaseURL: "https://exam2-df73d-default-rtdb.firebaseio.com",
+            projectId: "exam2-df73d",
+            storageBucket: "exam2-df73d.appspot.com",
+            messagingSenderId: "1033549838917",
+            appId: "1:1033549838917:web:fa6775938004cea9b6c12c",
+            measurementId: "G-1TSVFQNHEY"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // DOM Elements
+        const loadingEl = document.getElementById('loading');
+        const questionsContainer = document.getElementById('questions-container');
+        const resultContainer = document.getElementById('result-container');
+        const scoreEl = document.getElementById('score');
+        const scoreDetailsEl = document.getElementById('score-details');
+        const restartBtn = document.getElementById('restart-btn');
+        
+                 // Add Question Form Elements
+         const showAddFormBtn = document.getElementById('show-add-form-btn');
+         const addQuestionFormContainer = document.getElementById('add-question-form-container');
+         const addQuestionForm = document.getElementById('add-question-form');
+         const cancelAddBtn = document.getElementById('cancel-add-btn');
+         const closeAddModal = document.getElementById('close-add-modal');
+         const questionTypeSelect = document.getElementById('question-type');
+         const dynamicFieldsContainer = document.getElementById('dynamic-fields-container');
+         const formStatus = document.getElementById('form-status');
+
+        // Edit Question Form Elements
+        const editQuestionModal = document.getElementById('edit-question-modal');
+        const editQuestionForm = document.getElementById('edit-question-form');
+        const closeEditModal = document.getElementById('close-edit-modal');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const editQuestionTypeSelect = document.getElementById('edit-question-type');
+        const editDynamicFieldsContainer = document.getElementById('edit-dynamic-fields-container');
+        const editFormStatus = document.getElementById('edit-form-status');
+        const editQuestionIndex = document.getElementById('edit-question-index');
+
+
+        let questionsData = [];
+
+        // Function to shuffle an array (for matching options)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to render questions on the page
+        function renderQuestions() {
+            questionsContainer.innerHTML = '';
+            if (!Array.isArray(questionsData) || questionsData.length === 0) {
+                 questionsContainer.innerHTML = `<p class="text-center text-gray-500">Belum ada soal. Silakan tambahkan soal baru.</p>`;
+                 return;
+            }
+
+            // Create table structure
+            let tableContent = `
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Soal</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+            `;
+
+            questionsData.forEach((q, index) => {
+                let questionType = '';
+
+                // Determine question type display
+                switch (q.type) {
+                    case 'multiple_choice':
+                        questionType = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Pilihan Ganda</span>';
+                        break;
+                    
+                    case 'true_false':
+                        questionType = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Benar/Salah</span>';
+                        break;
+
+                    case 'short_answer':
+                        questionType = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Jawaban Singkat</span>';
+                        break;
+                    
+                    case 'matching':
+                        questionType = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">Menjodohkan</span>';
+                        break;
+                }
+
+                // Add case description if exists
+                let questionText = q.question;
+                if (q.caseDescription) {
+                    questionText = `
+                        <div>
+                            <div class="mb-2 p-2 bg-gray-50 border-l-3 border-gray-300 rounded-r text-xs">
+                                <strong>Studi Kasus:</strong> ${q.caseDescription}
+                            </div>
+                            <div>${q.question}</div>
+                        </div>
+                    `;
+                }
+
+                                 tableContent += `
+                     <tr class="hover:bg-gray-50">
+                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                             ${index + 1}
+                         </td>
+                         <td class="px-6 py-4 text-sm text-gray-900 max-w-md">
+                             ${questionText}
+                         </td>
+                         <td class="px-6 py-4 whitespace-nowrap">
+                             ${questionType}
+                         </td>
+                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                             <div class="flex space-x-2">
+                                 <button class="edit-question-btn bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs" data-index="${index}">
+                                     Edit
+                                 </button>
+                                 <button class="delete-question-btn bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs" data-index="${index}">
+                                     Hapus
+                                 </button>
+                             </div>
+                         </td>
+                     </tr>
+                 `;
+            });
+
+            tableContent += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            questionsContainer.innerHTML = tableContent;
+        }
+
+        // --- Logic for Add Question Form ---
+
+        function updateFormFields() {
+            const type = questionTypeSelect.value;
+            dynamicFieldsContainer.innerHTML = ''; // Clear previous fields
+
+                         if (type === 'multiple_choice') {
+                 dynamicFieldsContainer.innerHTML = `
+                     <label class="block text-xs font-medium text-gray-700">Opsi Jawaban (Pilih satu sebagai jawaban benar)</label>
+                     ${[0,1,2,3].map(i => `
+                         <div class="flex items-center space-x-2">
+                             <input type="radio" name="mcq-answer" value="${i}" required class="form-radio h-3 w-3 text-blue-600">
+                             <input type="text" placeholder="Opsi ${i + 1}" class="form-input-mcq block w-full rounded border-gray-300 shadow-sm text-xs py-1 px-2" required>
+                         </div>
+                     `).join('')}
+                 `;
+                         } else if (type === 'true_false') {
+                 dynamicFieldsContainer.innerHTML = `
+                     <label class="block text-xs font-medium text-gray-700">Jawaban Benar</label>
+                     <select id="tf-answer" class="mt-1 block w-full rounded border-gray-300 shadow-sm text-xs">
+                         <option value="true">Benar</option>
+                         <option value="false">Salah</option>
+                     </select>
+                 `;
+             } else if (type === 'short_answer') {
+                 dynamicFieldsContainer.innerHTML = `
+                     <label class="block text-xs font-medium text-gray-700">Jawaban Benar</label>
+                     <input type="text" id="sa-answer" class="mt-1 block w-full rounded border-gray-300 shadow-sm text-xs" required placeholder="Jawaban singkat...">
+                 `;
+                         } else if (type === 'matching') {
+                  dynamicFieldsContainer.innerHTML = `
+                     <label class="block text-xs font-medium text-gray-700">Pasangan</label>
+                     <div id="matching-pairs-container" class="space-y-2">
+                         <div class="flex items-center space-x-2">
+                             <input type="text" placeholder="Item Kiri" class="form-input-match-left block w-full rounded border-gray-300 shadow-sm text-xs" required>
+                             <span class="text-xs">-</span>
+                             <input type="text" placeholder="Item Kanan" class="form-input-match-right block w-full rounded border-gray-300 shadow-sm text-xs" required>
+                         </div>
+                     </div>
+                     <button type="button" id="add-matching-pair-btn" class="text-xs text-blue-600 hover:underline">+ Tambah Pasangan</button>
+                 `;
+                                 document.getElementById('add-matching-pair-btn').addEventListener('click', () => {
+                     const container = document.getElementById('matching-pairs-container');
+                     const newPair = document.createElement('div');
+                     newPair.className = 'flex items-center space-x-2';
+                     newPair.innerHTML = `
+                         <input type="text" placeholder="Item Kiri" class="form-input-match-left block w-full rounded border-gray-300 shadow-sm text-xs" required>
+                         <span class="text-xs">-</span>
+                         <input type="text" placeholder="Item Kanan" class="form-input-match-right block w-full rounded border-gray-300 shadow-sm text-xs" required>
+                     `;
+                     container.appendChild(newPair);
+                 });
+            }
+        }
+
+        function updateEditFormFields() {
+            const type = editQuestionTypeSelect.value;
+            editDynamicFieldsContainer.innerHTML = ''; // Clear previous fields
+
+                         if (type === 'multiple_choice') {
+                 editDynamicFieldsContainer.innerHTML = `
+                     <label class="block text-xs font-medium text-gray-700">Opsi Jawaban (Pilih satu sebagai jawaban benar)</label>
+                     ${[0,1,2,3].map(i => `
+                         <div class="flex items-center space-x-2">
+                             <input type="radio" name="edit-mcq-answer" value="${i}" required class="form-radio h-3 w-3 text-blue-600">
+                             <input type="text" placeholder="Opsi ${i + 1}" class="edit-form-input-mcq block w-full rounded border-gray-300 shadow-sm text-xs py-1 px-2" required>
+                         </div>
+                     `).join('')}
+                 `;
+                         } else if (type === 'true_false') {
+                 editDynamicFieldsContainer.innerHTML = `
+                     <label class="block text-xs font-medium text-gray-700">Jawaban Benar</label>
+                     <select id="edit-tf-answer" class="mt-1 block w-full rounded border-gray-300 shadow-sm text-xs">
+                         <option value="true">Benar</option>
+                         <option value="false">Salah</option>
+                     </select>
+                 `;
+             } else if (type === 'short_answer') {
+                 editDynamicFieldsContainer.innerHTML = `
+                     <label class="block text-xs font-medium text-gray-700">Jawaban Benar</label>
+                     <input type="text" id="edit-sa-answer" class="mt-1 block w-full rounded border-gray-300 shadow-sm text-xs" required placeholder="Jawaban singkat...">
+                 `;
+                         } else if (type === 'matching') {
+                  editDynamicFieldsContainer.innerHTML = `
+                     <label class="block text-xs font-medium text-gray-700">Pasangan</label>
+                     <div id="edit-matching-pairs-container" class="space-y-2">
+                         <div class="flex items-center space-x-2">
+                             <input type="text" placeholder="Item Kiri" class="edit-form-input-match-left block w-full rounded border-gray-300 shadow-sm text-xs" required>
+                             <span class="text-xs">-</span>
+                             <input type="text" placeholder="Item Kanan" class="edit-form-input-match-right block w-full rounded border-gray-300 shadow-sm text-xs" required>
+                         </div>
+                     </div>
+                     <button type="button" id="edit-add-matching-pair-btn" class="text-xs text-blue-600 hover:underline">+ Tambah Pasangan</button>
+                 `;
+                                 document.getElementById('edit-add-matching-pair-btn').addEventListener('click', () => {
+                     const container = document.getElementById('edit-matching-pairs-container');
+                     const newPair = document.createElement('div');
+                     newPair.className = 'flex items-center space-x-2';
+                     newPair.innerHTML = `
+                         <input type="text" placeholder="Item Kiri" class="edit-form-input-match-left block w-full rounded border-gray-300 shadow-sm text-xs" required>
+                         <span class="text-xs">-</span>
+                         <input type="text" placeholder="Item Kanan" class="edit-form-input-match-right block w-full rounded border-gray-300 shadow-sm text-xs" required>
+                     `;
+                     container.appendChild(newPair);
+                 });
+            }
+        }
+        
+                 showAddFormBtn.addEventListener('click', () => {
+             addQuestionFormContainer.classList.remove('hidden');
+             updateFormFields();
+         });
+
+         cancelAddBtn.addEventListener('click', () => {
+             addQuestionForm.reset();
+             addQuestionFormContainer.classList.add('hidden');
+             formStatus.textContent = '';
+         });
+
+         closeAddModal.addEventListener('click', () => {
+             addQuestionForm.reset();
+             addQuestionFormContainer.classList.add('hidden');
+             formStatus.textContent = '';
+         });
+
+        questionTypeSelect.addEventListener('change', updateFormFields);
+        editQuestionTypeSelect.addEventListener('change', updateEditFormFields);
+
+        // Function to populate edit form with existing question data
+        function populateEditForm(questionIndex) {
+            const question = questionsData[questionIndex];
+            editQuestionIndex.value = questionIndex;
+            
+            // Fill basic fields
+            document.getElementById('edit-question-text').value = question.question;
+            document.getElementById('edit-question-type').value = question.type;
+            
+            if (question.caseDescription) {
+                document.getElementById('edit-case-description').value = question.caseDescription;
+            } else {
+                document.getElementById('edit-case-description').value = '';
+            }
+            
+            // Update form fields based on type
+            updateEditFormFields();
+            
+            // Fill specific fields based on question type
+            setTimeout(() => {
+                if (question.type === 'multiple_choice') {
+                    const optionInputs = document.querySelectorAll('.edit-form-input-mcq');
+                    const answerRadio = document.querySelector(`input[name="edit-mcq-answer"][value="${question.options.indexOf(question.answer)}"]`);
+                    
+                    question.options.forEach((option, i) => {
+                        if (optionInputs[i]) {
+                            optionInputs[i].value = option;
+                        }
+                    });
+                    
+                    if (answerRadio) {
+                        answerRadio.checked = true;
+                    }
+                } else if (question.type === 'true_false') {
+                    document.getElementById('edit-tf-answer').value = String(question.answer);
+                } else if (question.type === 'short_answer') {
+                    document.getElementById('edit-sa-answer').value = question.answer;
+                } else if (question.type === 'matching') {
+                    const leftInputs = document.querySelectorAll('.edit-form-input-match-left');
+                    const rightInputs = document.querySelectorAll('.edit-form-input-match-right');
+                    
+                    // Clear existing pairs and add new ones
+                    const container = document.getElementById('edit-matching-pairs-container');
+                    container.innerHTML = '';
+                    
+                                         question.pairs.forEach((pair, i) => {
+                         const pairDiv = document.createElement('div');
+                         pairDiv.className = 'flex items-center space-x-2';
+                         pairDiv.innerHTML = `
+                             <input type="text" value="${pair.left}" class="edit-form-input-match-left block w-full rounded border-gray-300 shadow-sm text-xs" required>
+                             <span class="text-xs">-</span>
+                             <input type="text" value="${pair.right}" class="edit-form-input-match-right block w-full rounded border-gray-300 shadow-sm text-xs" required>
+                         `;
+                         container.appendChild(pairDiv);
+                     });
+                }
+            }, 100);
+        }
+
+        // Event listeners for edit functionality
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('edit-question-btn')) {
+                const questionIndex = parseInt(e.target.dataset.index);
+                populateEditForm(questionIndex);
+                editQuestionModal.classList.remove('hidden');
+            }
+            
+            if (e.target.classList.contains('delete-question-btn')) {
+                const questionIndex = parseInt(e.target.dataset.index);
+                if (confirm('Apakah Anda yakin ingin menghapus soal ini?')) {
+                    deleteQuestion(questionIndex);
+                }
+            }
+        });
+
+        // Close edit modal
+        closeEditModal.addEventListener('click', () => {
+            editQuestionModal.classList.add('hidden');
+        });
+
+        cancelEditBtn.addEventListener('click', () => {
+            editQuestionModal.classList.add('hidden');
+        });
+
+        // Function to delete question
+        async function deleteQuestion(questionIndex) {
+            try {
+                const updatedQuestions = questionsData.filter((_, index) => index !== questionIndex);
+                await set(ref(database, '/questions'), updatedQuestions);
+                questionsData = updatedQuestions;
+                renderQuestions();
+            } catch (error) {
+                console.error("Error deleting question:", error);
+                alert('Gagal menghapus soal: ' + error.message);
+            }
+        }
+
+        addQuestionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            formStatus.textContent = 'Menyimpan...';
+            formStatus.classList.remove('text-red-500', 'text-green-500');
+            formStatus.classList.add('text-gray-500');
+
+            const newQuestion = {
+                type: questionTypeSelect.value,
+                question: document.getElementById('question-text').value.trim()
+            };
+
+            const caseDescription = document.getElementById('case-description').value.trim();
+            if (caseDescription) {
+                newQuestion.caseDescription = caseDescription;
+            }
+
+            try {
+                switch (newQuestion.type) {
+                    case 'multiple_choice':
+                        const options = Array.from(document.querySelectorAll('.form-input-mcq')).map(input => input.value.trim());
+                        const answerIndex = document.querySelector('input[name="mcq-answer"]:checked').value;
+                        newQuestion.options = options;
+                        newQuestion.answer = options[answerIndex];
+                        if (options.some(opt => opt === '') || !newQuestion.answer) throw new Error("Semua opsi dan jawaban harus diisi.");
+                        break;
+                    case 'true_false':
+                        newQuestion.answer = document.getElementById('tf-answer').value === 'true';
+                        break;
+                    case 'short_answer':
+                        newQuestion.answer = document.getElementById('sa-answer').value.trim();
+                        if (newQuestion.answer === '') throw new Error("Jawaban harus diisi.");
+                        break;
+                    case 'matching':
+                        const lefts = Array.from(document.querySelectorAll('.form-input-match-left')).map(i => i.value.trim());
+                        const rights = Array.from(document.querySelectorAll('.form-input-match-right')).map(i => i.value.trim());
+                        if (lefts.some(v => v === '') || rights.some(v => v === '')) throw new Error("Semua item pasangan harus diisi.");
+                        newQuestion.pairs = lefts.map((left, i) => ({ left, right: rights[i] }));
+                        break;
+                }
+
+                // Fetch current questions, add the new one, and set it back
+                const currentQuestionsSnapshot = await get(ref(database, '/questions'));
+                const currentQuestions = currentQuestionsSnapshot.exists() ? currentQuestionsSnapshot.val() : [];
+                currentQuestions.push(newQuestion);
+                
+                await set(ref(database, '/questions'), currentQuestions);
+
+                formStatus.textContent = 'Soal berhasil disimpan!';
+                formStatus.classList.add('text-green-500');
+
+                                 setTimeout(() => {
+                     addQuestionForm.reset();
+                     addQuestionFormContainer.classList.add('hidden');
+                     startExam(); // Refresh the exam view
+                 }, 1000);
+
+            } catch (error) {
+                console.error("Error saving question:", error);
+                formStatus.textContent = `Gagal menyimpan: ${error.message}`;
+                formStatus.classList.add('text-red-500');
+            }
+        });
+
+        // Edit Question Form Submit Handler
+        editQuestionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            editFormStatus.textContent = 'Menyimpan perubahan...';
+            editFormStatus.classList.remove('text-red-500', 'text-green-500');
+            editFormStatus.classList.add('text-gray-500');
+
+            const questionIndex = parseInt(editQuestionIndex.value);
+            const updatedQuestion = {
+                type: editQuestionTypeSelect.value,
+                question: document.getElementById('edit-question-text').value.trim()
+            };
+
+            const caseDescription = document.getElementById('edit-case-description').value.trim();
+            if (caseDescription) {
+                updatedQuestion.caseDescription = caseDescription;
+            }
+
+            try {
+                switch (updatedQuestion.type) {
+                    case 'multiple_choice':
+                        const options = Array.from(document.querySelectorAll('.edit-form-input-mcq')).map(input => input.value.trim());
+                        const answerIndex = document.querySelector('input[name="edit-mcq-answer"]:checked').value;
+                        updatedQuestion.options = options;
+                        updatedQuestion.answer = options[answerIndex];
+                        if (options.some(opt => opt === '') || !updatedQuestion.answer) throw new Error("Semua opsi dan jawaban harus diisi.");
+                        break;
+                    case 'true_false':
+                        updatedQuestion.answer = document.getElementById('edit-tf-answer').value === 'true';
+                        break;
+                    case 'short_answer':
+                        updatedQuestion.answer = document.getElementById('edit-sa-answer').value.trim();
+                        if (updatedQuestion.answer === '') throw new Error("Jawaban harus diisi.");
+                        break;
+                    case 'matching':
+                        const lefts = Array.from(document.querySelectorAll('.edit-form-input-match-left')).map(i => i.value.trim());
+                        const rights = Array.from(document.querySelectorAll('.edit-form-input-match-right')).map(i => i.value.trim());
+                        if (lefts.some(v => v === '') || rights.some(v => v === '')) throw new Error("Semua item pasangan harus diisi.");
+                        updatedQuestion.pairs = lefts.map((left, i) => ({ left, right: rights[i] }));
+                        break;
+                }
+
+                // Update the question in the array
+                questionsData[questionIndex] = updatedQuestion;
+                
+                // Save to database
+                await set(ref(database, '/questions'), questionsData);
+
+                editFormStatus.textContent = 'Soal berhasil diperbarui!';
+                editFormStatus.classList.add('text-green-500');
+
+                setTimeout(() => {
+                    editQuestionModal.classList.add('hidden');
+                    renderQuestions(); // Refresh the display
+                }, 1000);
+
+            } catch (error) {
+                console.error("Error updating question:", error);
+                editFormStatus.textContent = `Gagal memperbarui: ${error.message}`;
+                editFormStatus.classList.add('text-red-500');
+            }
+        });
+
+        // --- End of Add Question Form Logic ---
+
+
+        // Function to calculate the score
+        function calculateScore() {
+            let score = 0;
+            let correctAnswers = 0;
+
+            questionsData.forEach((q, index) => {
+                let isCorrect = false;
+                switch (q.type) {
+                    case 'multiple_choice': {
+                        const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+                        if (selected && selected.value === q.answer) isCorrect = true;
+                        break;
+                    }
+                    case 'true_false': {
+                        const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+                        if (selected && (selected.value === String(q.answer))) isCorrect = true;
+                        break;
+                    }
+                    case 'short_answer': {
+                        const input = document.querySelector(`input[name="question-${index}"]`);
+                        if (input && input.value.trim().toLowerCase() === q.answer.toLowerCase()) isCorrect = true;
+                        break;
+                    }
+                    case 'matching': {
+                        let allPairsCorrect = true;
+                        q.pairs.forEach((pair, pairIndex) => {
+                            const select = document.querySelector(`select[name="question-${index}-${pairIndex}"]`);
+                            if (!select || select.value !== pair.right) allPairsCorrect = false;
+                        });
+                        if(allPairsCorrect) isCorrect = true;
+                        break;
+                    }
+                }
+                if(isCorrect) correctAnswers++;
+            });
+            
+            score = Math.round((correctAnswers / questionsData.length) * 100);
+            return { score, correctAnswers, total: questionsData.length };
+        }
+
+
+        
+        restartBtn.addEventListener('click', () => {
+            resultContainer.classList.add('hidden');
+            startExam(); // Re-fetch and render questions
+        });
+
+        // Main function to fetch data and start the exam
+        async function startExam() {
+            loadingEl.classList.remove('hidden');
+            questionsContainer.innerHTML = '';
+            
+            try {
+                // IMPORTANT: Your Firebase Realtime Database rules must allow public read/write.
+                // { "rules": { ".read": true, ".write": true } }
+                // This is insecure for production. For a real app, use authentication.
+
+                const snapshot = await get(ref(database, '/questions'));
+                if (snapshot.exists()) {
+                    questionsData = snapshot.val();
+                } else {
+                    questionsData = []; // No questions exist yet
+                }
+                renderQuestions();
+                
+            } catch (error) {
+                console.error("Error during exam startup: ", error);
+                questionsContainer.innerHTML = `<p class="text-red-500 font-semibold text-center">Gagal memuat soal. Pastikan aturan keamanan Firebase memperbolehkan akses baca. <br><small>${error.message}</small></p>`;
+            } finally {
+                loadingEl.classList.add('hidden');
+            }
+        }
+
+        // Initial load
+        startExam();
+    </script>
+</body>
+</html>
