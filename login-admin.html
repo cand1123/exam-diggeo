@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - Sistem Ujian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .login-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .login-card {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .input-field:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+        .error-message {
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .success-message {
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container flex items-center justify-center p-4">
+        <div class="login-card w-full max-w-md rounded-2xl shadow-2xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Admin Login</h1>
+                <p class="text-gray-600">Masuk ke sistem administrasi ujian</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        required
+                        class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                        placeholder="Masukkan username admin"
+                    >
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required
+                            class="input-field w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                            placeholder="Masukkan password"
+                        >
+                        <button 
+                            type="button" 
+                            id="togglePassword"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                            <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="rememberMe" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                        <span class="ml-2 text-sm text-gray-600">Ingat saya</span>
+                    </label>
+                    <a href="#" class="text-sm text-indigo-600 hover:text-indigo-500 transition-colors">Lupa password?</a>
+                </div>
+
+                <button 
+                    type="submit" 
+                    id="loginBtn"
+                    class="btn-primary w-full py-3 px-4 text-white font-semibold rounded-lg text-lg"
+                >
+                    <span id="loginText">Masuk ke Sistem</span>
+                    <svg id="loginSpinner" class="hidden w-5 h-5 animate-spin ml-2" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Status Messages -->
+            <div id="statusMessage" class="mt-6 hidden"></div>
+
+            <!-- Demo Credentials -->
+            <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Demo Credentials:</h3>
+                <div class="text-xs text-gray-600 space-y-1">
+                    <p><strong>Username:</strong> admin</p>
+                    <p><strong>Password:</strong> admin123</p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-8 text-center">
+                <p class="text-sm text-gray-500">
+                    Kembali ke 
+                    <a href="index.html" class="text-indigo-600 hover:text-indigo-500 font-medium">Halaman Utama</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginText = document.getElementById('loginText');
+        const loginSpinner = document.getElementById('loginSpinner');
+        const statusMessage = document.getElementById('statusMessage');
+        const rememberMe = document.getElementById('rememberMe');
+
+        // Toggle Password Visibility
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle eye icon
+            if (type === 'text') {
+                eyeIcon.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+                `;
+            } else {
+                eyeIcon.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                `;
+            }
+        });
+
+        // Show Status Message
+        function showStatus(message, type = 'error') {
+            statusMessage.className = `mt-6 p-4 rounded-lg text-center ${type === 'error' ? 'bg-red-100 text-red-700 error-message' : 'bg-green-100 text-green-700 success-message'}`;
+            statusMessage.textContent = message;
+            statusMessage.classList.remove('hidden');
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusMessage.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        // Set Loading State
+        function setLoading(loading) {
+            if (loading) {
+                loginBtn.disabled = true;
+                loginText.textContent = 'Memverifikasi...';
+                loginSpinner.classList.remove('hidden');
+            } else {
+                loginBtn.disabled = false;
+                loginText.textContent = 'Masuk ke Sistem';
+                loginSpinner.classList.add('hidden');
+            }
+        }
+
+        // Check if user is already logged in
+        function checkAuthStatus() {
+            const token = localStorage.getItem('adminToken');
+            const adminData = localStorage.getItem('adminData');
+            
+            if (token && adminData) {
+                // Redirect to admin dashboard
+                window.location.href = 'mode-admin.html';
+            }
+        }
+
+        // Handle Login Form Submit
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            // Basic validation
+            if (!username || !password) {
+                showStatus('Username dan password harus diisi!', 'error');
+                return;
+            }
+            
+            setLoading(true);
+            
+            try {
+                // Simulate API call delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Demo authentication (replace with real API call)
+                if (username === 'admin' && password === 'admin123') {
+                    // Generate simple token
+                    const token = 'admin_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    
+                    // Store admin data
+                    const adminData = {
+                        username: username,
+                        fullName: 'Candra Kurniawan, M. Pd',
+                        role: 'admin',
+                        loginTime: new Date().toISOString()
+                    };
+                    
+                    // Save to localStorage
+                    localStorage.setItem('adminToken', token);
+                    localStorage.setItem('adminData', JSON.stringify(adminData));
+                    
+                    // Save remember me preference
+                    if (rememberMe.checked) {
+                        localStorage.setItem('rememberMe', 'true');
+                    } else {
+                        localStorage.setItem('rememberMe', 'false');
+                    }
+                    
+                    showStatus('Login berhasil! Mengalihkan ke dashboard...', 'success');
+                    
+                    // Redirect after success message
+                    setTimeout(() => {
+                        window.location.href = 'mode-admin.html';
+                    }, 1500);
+                    
+                } else {
+                    showStatus('Username atau password salah!', 'error');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showStatus('Terjadi kesalahan sistem. Silakan coba lagi.', 'error');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Auto-focus username field
+        usernameInput.focus();
+        
+        // Check auth status on page load
+        checkAuthStatus();
+    </script>
+</body>
+</html>
