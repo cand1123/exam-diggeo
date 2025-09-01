@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,25 +8,55 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .btn-primary { min-width: 100px; height: 40px; }
-        .btn-secondary { min-width: 80px; height: 36px; }
-        .exam-container { max-width: 600px; margin: 0 auto; }
-        .question-spacing { margin-bottom: 1rem; }
-        .option-spacing { margin-bottom: 0.5rem; }
-        .questions-container { min-height: 350px; }
-        .question-block { min-height: 280px; }
-        .options-container { min-height: 180px; }
-        .case-study-box { 
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            min-width: 100px;
+            height: 40px;
+        }
+
+        .btn-secondary {
+            min-width: 80px;
+            height: 36px;
+        }
+
+        .exam-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .question-spacing {
+            margin-bottom: 1rem;
+        }
+
+        .option-spacing {
+            margin-bottom: 0.5rem;
+        }
+
+        .questions-container {
+            min-height: 350px;
+        }
+
+        .question-block {
+            min-height: 280px;
+        }
+
+        .options-container {
+            min-height: 180px;
+        }
+
+        .case-study-box {
             background: linear-gradient(135deg, #ff006e, #ff6b35, #ffd23f);
             background-size: 300% 300%;
             color: white;
             border-radius: 25px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 
+            box-shadow:
                 0 0 30px #ff006e,
                 0 0 60px #ff6b35,
                 0 0 90px #ffd23f,
@@ -34,13 +65,13 @@
             background-clip: padding-box;
             position: relative;
             overflow: hidden;
-            animation: 
+            animation:
                 neon-glow 2s ease-in-out infinite alternate,
                 gradient-flow 4s ease infinite,
                 float 3s ease-in-out infinite;
             transform-origin: center;
         }
-        
+
         .case-study-box::before {
             content: '';
             position: absolute;
@@ -54,7 +85,7 @@
             z-index: -1;
             animation: border-rotate 3s linear infinite;
         }
-        
+
         .case-study-box::after {
             content: '';
             position: absolute;
@@ -65,12 +96,12 @@
             background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
             animation: shine 2s ease-in-out infinite;
         }
-        
+
         .case-study-title {
             font-size: 26px;
             font-weight: 900;
             margin-bottom: 22px;
-            text-shadow: 
+            text-shadow:
                 3px 3px 0px #ff006e,
                 6px 6px 0px #ff6b35,
                 9px 9px 0px #ffd23f;
@@ -81,7 +112,7 @@
             animation: title-pulse 1.5s ease-in-out infinite alternate;
             text-align: center;
         }
-        
+
         .case-study-content {
             font-size: 17px;
             line-height: 1.9;
@@ -89,61 +120,92 @@
             position: relative;
             z-index: 2;
             font-weight: 600;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
             background: rgba(255, 255, 255, 0.1);
             padding: 20px;
             border-radius: 15px;
             backdrop-filter: blur(10px);
         }
-        
+
         @keyframes neon-glow {
             0% {
-                box-shadow: 
+                box-shadow:
                     0 0 30px #ff006e,
                     0 0 60px #ff6b35,
                     0 0 90px #ffd23f;
                 transform: scale(1);
             }
+
             100% {
-                box-shadow: 
+                box-shadow:
                     0 0 50px #ff006e,
                     0 0 100px #ff6b35,
                     0 0 150px #ffd23f;
                 transform: scale(1.03);
             }
         }
-        
+
         @keyframes gradient-flow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
-        
+
         @keyframes border-rotate {
-            0% { background-position: 0% 0%; }
-            100% { background-position: 360% 0%; }
+            0% {
+                background-position: 0% 0%;
+            }
+
+            100% {
+                background-position: 360% 0%;
+            }
         }
-        
+
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
         }
-        
+
         @keyframes shine {
-            0%, 100% { opacity: 0.3; transform: translateX(-100%) translateY(-100%); }
-            50% { opacity: 0.6; transform: translateX(100%) translateY(100%); }
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: translateX(-100%) translateY(-100%);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: translateX(100%) translateY(100%);
+            }
         }
-        
+
         @keyframes title-pulse {
-            0% { 
-                text-shadow: 
+            0% {
+                text-shadow:
                     3px 3px 0px #ff006e,
                     6px 6px 0px #ff6b35,
                     9px 9px 0px #ffd23f;
                 transform: scale(1);
             }
-            100% { 
-                text-shadow: 
+
+            100% {
+                text-shadow:
                     3px 3px 0px #ff006e,
                     6px 6px 0px #ff6b35,
                     9px 9px 0px #ffd23f,
@@ -152,84 +214,97 @@
                 transform: scale(1.05);
             }
         }
-        
+
         .case-study-box:hover {
             transform: scale(1.08) translateY(-10px) rotate(1deg);
-            box-shadow: 
+            box-shadow:
                 0 0 60px #ff006e,
                 0 0 120px #ff6b35,
                 0 0 180px #ffd23f,
-                0 20px 40px rgba(0,0,0,0.3);
+                0 20px 40px rgba(0, 0, 0, 0.3);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation-play-state: paused;
         }
-        
+
         .case-study-box:hover::before {
             animation-play-state: paused;
         }
-        
+
         .case-study-box:hover::after {
             animation-play-state: paused;
         }
-        
+
         .case-study-box:hover .case-study-title {
             animation-play-state: paused;
         }
     </style>
 </head>
+
 <body class="bg-gray-100 text-gray-800">
     <div class="container mx-auto px-6 sm:px-8 lg:px-12 exam-container">
         <header class="text-center mb-4 sm:mb-6 mt-4 sm:mt-6">
-            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">Evaluasi dan Refleksi Pembelajaran</h1>
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">Evaluasi dan Refleksi Pembelajaran
+            </h1>
             <p class="text-xs sm:text-sm text-gray-600">Silakan jawab semua pertanyaan dengan teliti</p>
         </header>
 
-        <main id="exam-container" class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <main id="exam-container" class="bg-white rounded-xl shadow-lg overflow-hidden main-hero">
             <div id="loading" class="text-center py-8 px-4">
-                <svg class="animate-spin h-6 w-6 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg class="animate-spin h-6 w-6 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
                 </svg>
                 <p class="mt-3 text-sm text-gray-600">Memuat soal dari database...</p>
             </div>
 
             <div id="questions-container" class="p-4 space-y-4 questions-container"></div>
 
-            <div id="question-navigation" class="px-4 py-3 bg-gray-50 border-t border-gray-200 hidden">
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm text-gray-600">Soal:</span>
-                        <span id="current-question" class="font-semibold text-blue-600 text-sm">1</span>
-                        <span class="text-gray-400 text-sm">/</span>
-                        <span id="total-questions" class="text-gray-600 text-sm">5</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2">
-                        <button id="prev-btn" class="btn-secondary px-3 py-1.5 text-sm bg-orange-50 border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
-                            ← Sebelumnya
-                        </button>
-                        <button id="next-btn" class="btn-secondary px-3 py-1.5 text-sm bg-green-50 border border-green-300 text-green-700 rounded-lg hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
-                            Selanjutnya →
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="question-dots" class="flex justify-center mt-2 gap-1 flex-wrap"></div>
-            </div>
+            <div>
+                <div id="question-navigation" class="px-4 py-3 bg-gray-50 border-t border-gray-200 hidden">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-600">Soal:</span>
+                            <span id="current-question" class="font-semibold text-blue-600 text-sm">1</span>
+                            <span class="text-gray-400 text-sm">/</span>
+                            <span id="total-questions" class="text-gray-600 text-sm">5</span>
+                        </div>
 
-            <div id="submit-section" class="px-4 py-4 bg-gray-50 border-t border-gray-200 hidden">
-                <div class="text-center">
-                    <button id="submit-btn" class="btn-primary bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 text-sm">
-                        Selesai & Kirim Jawaban
-                    </button>
+                        <div class="flex items-center gap-2">
+                            <button id="prev-btn"
+                                class="btn-secondary px-3 py-1.5 text-sm bg-orange-50 border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                                ← Sebelumnya
+                            </button>
+                            <button id="next-btn"
+                                class="btn-secondary px-3 py-1.5 text-sm bg-green-50 border border-green-300 text-green-700 rounded-lg hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                                Selanjutnya →
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="question-dots" class="flex justify-center mt-2 gap-1 flex-wrap"></div>
+                </div>
+
+                <div id="submit-section" class="px-4 py-4 bg-gray-50 border-t border-gray-200 hidden">
+                    <div class="text-center">
+                        <button id="submit-btn"
+                            class="btn-primary bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 text-sm">
+                            Selesai & Kirim Jawaban
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div id="result-container" class="text-center py-8 px-4 hidden">
                 <h2 class="text-xl lg:text-2xl font-bold mb-4 text-gray-900">Hasil Ujian Anda</h2>
-                <div id="score" class="w-24 h-24 text-3xl lg:text-4xl font-bold text-blue-600 bg-blue-50 rounded-full mx-auto mb-4 flex items-center justify-center"></div>
+                <div id="score"
+                    class="w-24 h-24 text-3xl lg:text-4xl font-bold text-blue-600 bg-blue-50 rounded-full mx-auto mb-4 flex items-center justify-center">
+                </div>
                 <p id="score-details" class="text-base text-gray-700 mb-6"></p>
-                <button id="restart-btn" class="btn-primary bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 hover:shadow-lg text-sm">
+                <button id="restart-btn"
+                    class="btn-primary bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 hover:shadow-lg text-sm">
                     Ulangi Ujian
                 </button>
             </div>
@@ -261,7 +336,7 @@
         let questionsData = [];
         let currentQuestionIndex = 0;
         let userAnswers = {};
-        
+
         // DOM Elements
         const loadingEl = document.getElementById('loading');
         const questionsContainer = document.getElementById('questions-container');
@@ -281,18 +356,18 @@
         // Function to render a single question
         function renderQuestion(index) {
             console.log(`Rendering question ${index}:`, questionsData[index]);
-            
+
             if (index < 0 || index >= questionsData.length) {
                 console.error(`Index ${index} out of bounds. Total questions: ${questionsData.length}`);
                 return;
             }
-            
+
             const q = questionsData[index];
             console.log(`Question data:`, q);
-            
+
             // Clear existing question
             questionsContainer.innerHTML = '';
-            
+
             const questionEl = document.createElement('div');
             questionEl.className = 'question-block pt-4 question-spacing';
             questionEl.dataset.index = index;
@@ -330,7 +405,7 @@
                         `;
                     });
                     break;
-                
+
                 case 'true_false':
                     console.log(`Rendering true/false question`);
                     content += `
@@ -350,7 +425,7 @@
                 case 'short_answer':
                     console.log(`Rendering short answer question`);
                     content += `
-                        <input type="text" name="question-${index}" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-2" placeholder="Ketik jawaban Anda di sini...">
+                        <textarea type="text" name="question-${index}" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-2" placeholder="Ketik jawaban Anda di sini..." style="height: 250px"></textarea>
                     `;
                     break;
 
@@ -358,7 +433,7 @@
                     console.log(`Rendering matching question with ${q.pairs.length} pairs`);
                     const leftItems = q.pairs.map(p => p.left);
                     const rightItems = q.pairs.map(p => p.right);
-                    
+
                     content += `<div class="space-y-3">`;
                     leftItems.forEach((leftItem, pairIndex) => {
                         content += `
@@ -376,7 +451,7 @@
                     });
                     content += `</div>`;
                     break;
-                
+
                 default:
                     console.error(`Unknown question type: ${q.type}`);
                     content += `<p class="text-red-500">Jenis soal tidak dikenali: ${q.type}</p>`;
@@ -386,15 +461,15 @@
             content += `</div>`;
             questionEl.innerHTML = content;
             questionsContainer.appendChild(questionEl);
-            
+
             console.log(`Question element created and added to container`);
-            
+
             // Update navigation state
             updateNavigation();
-            
+
             // Add event listeners for form elements
             addFormEventListeners();
-            
+
             // Restore user answers
             restoreUserAnswers();
         }
@@ -403,9 +478,9 @@
         function restoreUserAnswers() {
             const userAnswer = userAnswers[currentQuestionIndex];
             if (!userAnswer) return;
-            
+
             const q = questionsData[currentQuestionIndex];
-            
+
             switch (q.type) {
                 case 'multiple_choice':
                 case 'true_false': {
@@ -434,11 +509,11 @@
         function updateNavigation() {
             currentQuestionEl.textContent = currentQuestionIndex + 1;
             totalQuestionsEl.textContent = questionsData.length;
-            
+
             // Update button states
             prevBtn.disabled = currentQuestionIndex === 0;
             nextBtn.disabled = currentQuestionIndex === questionsData.length - 1;
-            
+
             // Update question dots
             updateQuestionDots();
         }
@@ -448,13 +523,12 @@
             questionDots.innerHTML = '';
             questionsData.forEach((_, index) => {
                 const dot = document.createElement('button');
-                dot.className = `w-2 h-2 rounded-full transition-all duration-200 ${
-                    index === currentQuestionIndex 
-                        ? 'bg-blue-600' 
-                        : userAnswers[index] 
-                            ? 'bg-green-500' 
-                            : 'bg-gray-300 hover:bg-gray-400'
-                }`;
+                dot.className = `w-2 h-2 rounded-full transition-all duration-200 ${index === currentQuestionIndex
+                    ? 'bg-blue-600'
+                    : userAnswers[index]
+                        ? 'bg-green-500'
+                        : 'bg-gray-300 hover:bg-gray-400'
+                    }`;
                 dot.onclick = () => goToQuestion(index);
                 questionDots.appendChild(dot);
             });
@@ -473,31 +547,31 @@
             // Radio buttons
             const radioButtons = questionsContainer.querySelectorAll('input[type="radio"]');
             radioButtons.forEach(radio => {
-                radio.addEventListener('change', function() {
+                radio.addEventListener('change', function () {
                     const questionIndex = parseInt(this.name.replace('question-', ''));
                     userAnswers[questionIndex] = this.value;
                     updateQuestionDots();
                 });
             });
-            
+
             // Text inputs
             const textInputs = questionsContainer.querySelectorAll('input[type="text"]');
             textInputs.forEach(input => {
-                input.addEventListener('input', function() {
+                input.addEventListener('input', function () {
                     const questionIndex = parseInt(this.name.replace('question-', ''));
                     userAnswers[questionIndex] = this.value;
                     updateQuestionDots();
                 });
             });
-            
+
             // Select dropdowns
             const selects = questionsContainer.querySelectorAll('select');
             selects.forEach(select => {
-                select.addEventListener('change', function() {
+                select.addEventListener('change', function () {
                     const nameParts = this.name.split('-');
                     const questionIndex = parseInt(nameParts[1]);
                     const pairIndex = parseInt(nameParts[2]);
-                    
+
                     if (!userAnswers[questionIndex]) {
                         userAnswers[questionIndex] = {};
                     }
@@ -514,7 +588,7 @@
                 renderQuestion(currentQuestionIndex);
             }
         });
-        
+
         nextBtn.addEventListener('click', () => {
             if (currentQuestionIndex < questionsData.length - 1) {
                 currentQuestionIndex++;
@@ -526,12 +600,12 @@
         function renderQuestions() {
             console.log(`renderQuestions called. Total questions: ${questionsData.length}`);
             console.log(`Current question index: ${currentQuestionIndex}`);
-            
+
             if (questionsData.length === 0) {
                 console.error("No questions data available");
                 return;
             }
-            
+
             renderQuestion(0);
         }
 
@@ -543,7 +617,7 @@
             questionsData.forEach((q, index) => {
                 let isCorrect = false;
                 const userAnswer = userAnswers[index];
-                
+
                 switch (q.type) {
                     case 'multiple_choice': {
                         if (userAnswer && userAnswer === q.answer) {
@@ -571,14 +645,14 @@
                                     allPairsCorrect = false;
                                 }
                             });
-                            if(allPairsCorrect) isCorrect = true;
+                            if (allPairsCorrect) isCorrect = true;
                         }
                         break;
                     }
                 }
-                if(isCorrect) correctAnswers++;
+                if (isCorrect) correctAnswers++;
             });
-            
+
             score = Math.round((correctAnswers / questionsData.length) * 100);
             return { score, correctAnswers, total: questionsData.length };
         }
@@ -587,7 +661,7 @@
         submitBtn.addEventListener('click', () => {
             if (window.confirm('Apakah Anda yakin ingin menyelesaikan ujian?')) {
                 const result = calculateScore();
-                
+
                 // Hide questions and show result
                 questionsContainer.classList.add('hidden');
                 questionNavigation.classList.add('hidden');
@@ -599,18 +673,18 @@
                 scoreDetailsEl.textContent = `Anda menjawab benar ${result.correctAnswers} dari ${result.total} pertanyaan.`;
             }
         });
-        
+
         restartBtn.addEventListener('click', () => {
             // Reset UI to initial state
             resultContainer.classList.add('hidden');
             questionsContainer.classList.remove('hidden');
             questionNavigation.classList.remove('hidden');
             submitSection.classList.remove('hidden');
-            
+
             // Reset navigation state
             currentQuestionIndex = 0;
             userAnswers = {};
-            
+
             renderQuestions(); // Re-render to clear previous answers
         });
 
@@ -619,18 +693,18 @@
             try {
                 console.log("Mengambil data soal dari Firebase...");
                 const snapshot = await get(ref(database, '/questions'));
-                
+
                 if (snapshot.exists()) {
                     questionsData = snapshot.val();
                     console.log("Data soal yang diterima:", questionsData);
-                    
+
                     if (Array.isArray(questionsData) && questionsData.length > 0) {
                         console.log(`Berhasil memuat ${questionsData.length} soal dari Firebase`);
-                        
+
                         // Filter questions that have case descriptions
                         const questionsWithCases = questionsData.filter(q => q.caseDescription && q.caseDescription.trim() !== '');
                         console.log(`Soal dengan kasus: ${questionsWithCases.length}`);
-                        
+
                         renderQuestions();
                         loadingEl.classList.add('hidden');
                         questionNavigation.classList.remove('hidden');
@@ -671,10 +745,10 @@
                 if (snapshot.exists()) {
                     const newQuestions = snapshot.val();
                     console.log("Real-time update received:", newQuestions);
-                    
+
                     if (Array.isArray(newQuestions) && newQuestions.length > 0) {
                         questionsData = newQuestions;
-                        
+
                         // Only update UI if we're not currently showing a question
                         if (questionsContainer.children.length === 0) {
                             renderQuestions();
@@ -693,13 +767,13 @@
         async function startExam() {
             try {
                 console.log("Memulai ujian...");
-                
+
                 // Set up real-time listener first
                 setupRealtimeListener();
-                
+
                 // Then fetch initial data
                 await fetchQuestionsFromFirebase();
-                
+
             } catch (error) {
                 console.error("Error during exam startup: ", error);
             }
@@ -709,4 +783,5 @@
         startExam();
     </script>
 </body>
+
 </html>
