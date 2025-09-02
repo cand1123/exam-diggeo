@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="img.png">
+    <title>
+        Exam Student
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        html {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .btn-primary {
+            min-width: 100px;
+            height: 40px;
+        }
+
+        .btn-secondary {
+            min-width: 80px;
+            height: 36px;
+        }
+
+        .exam-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .exam-layout {
+            display: grid;
+            grid-template-columns: 2.5fr 0.8fr;
+            gap: 24px;
+            height: calc(90vh - 120px);
+        }
+
+        .exam-main {
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .exam-sidebar {
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            height: 100%;
+            position: sticky;
+            top: 20px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .exam-layout {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .exam-main {
+                height: auto;
+                min-height: 60vh;
+                overflow: hidden;
+            }
+            
+            .exam-sidebar {
+                position: static;
+                box-shadow: none;
+                border-top: 1px solid #e5e7eb;
+                height: auto;
+                overflow: hidden;
+            }
+            
+            .questions-container {
+                overflow: hidden;
+            }
+        }
+
+        .question-spacing {
+            margin-bottom: 0.75rem;
+        }
+
+        .option-spacing {
+            margin-bottom: 0.5rem;
+        }
+
+        .questions-container {
+            min-height: 150px;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .question-block {
+            min-height: auto;
+        }
+
+        .options-container {
+            min-height: auto;
+        }
+
+        .case-study-box {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .case-study-title {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #6b7280;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 4px;
+        }
+
+        .case-study-title .text-red-500 {
+            font-size: 10px;
+            font-weight: 400;
+        }
+
+        .case-study-content {
+            font-size: 12px;
+            line-height: 1.3;
+            color: #6b7280;
+            margin: 0 0 12px 0;
+            text-align: justify;
+            font-style: italic;
+            background: #f9fafb;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .case-study-content strong {
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        /* Remove default focus border and apply blue border */
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6 !important;
+        }
+
+        /* Custom scrollbar for questions container */
+        .questions-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .questions-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .questions-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .questions-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body style="background-color: rgb(243 244 246 / var(--tw-text-opacity, 1)); color: rgb(17 24 39);">
+    <div class="container mx-auto px-2 sm:px-4 lg:px-6 exam-container">
+        <header class="text-center mb-4 sm:mb-6 mt-4 sm:mt-6">
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">Evaluasi dan Refleksi Pembelajaran
+            </h1>
+            <p class="text-xs sm:text-sm text-gray-600">Silakan jawab semua pertanyaan dengan teliti</p>
+
+        </header>
+
+
+
+        <div class="exam-layout">
+            <main class="exam-main">
+                <div id="loading" class="text-center py-8 px-4">
+                    <svg class="animate-spin h-6 w-6 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    <p class="mt-3 text-sm text-gray-600">Memuat soal dari database...</p>
+                </div>
+
+                <div id="questions-container" class="p-3 space-y-3 questions-container"></div>
+
+
+
+            </main>
+
+            <aside class="exam-sidebar">
+                <div id="question-navigation" class="hidden">
+                    <div class="mb-4">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-2">Daftar Soal</h3>
+                        <div id="question-dots" class="flex flex-wrap gap-1"></div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-2">Navigasi Soal</h3>
+                        <div class="flex flex-row flex-wrap gap-2 mb-4">
+                            <button id="prev-btn"
+                                class="btn-secondary px-3 h-8 text-xs bg-orange-50 border border-orange-300 text-orange-700 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                                ← 
+                            </button>
+                            <button id="submit-btn"
+                                class="flex-1 btn-primary bg-yellow-500 hover:bg-yellow-600 text-white font-bold h-8 px-3 shadow-md transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-yellow-300 text-xs">
+                                Tandai Ragu-ragu
+                            </button>
+                            <button id="next-btn"
+                                class="btn-secondary px-3 h-8 text-xs bg-green-50 border border-green-300 text-green-700 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                                 →
+                            </button>
+                        </div>
+                        <div class="mt-3">
+                            <button id="finish-btn"
+                                class="w-full btn-primary bg-blue-600 hover:bg-blue-700 text-white font-bold h-8 px-3 shadow-md transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 text-xs">
+                                Selesai & Kirim Jawaban
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, get, onValue, set, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzHFkgvotq8qb7oC81jDl-WyMgvDgRgyw",
+            authDomain: "exam2-df73d.firebaseapp.com",
+            databaseURL: "https://exam2-df73d-default-rtdb.firebaseio.com",
+            projectId: "exam2-df73d",
+            storageBucket: "exam2-df73d.appspot.com",
+            messagingSenderId: "1033549838917",
+            appId: "1:1033549838917:web:fa6775938004cea9b6c12c",
+            measurementId: "G-1TSVFQNHEY"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Global variables
+        let questionsData = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+
+        // DOM Elements
+        const loadingEl = document.getElementById('loading');
+        const questionsContainer = document.getElementById('questions-container');
+        const submitSection = document.getElementById('submit-section');
+        const submitBtn = document.getElementById('submit-btn');
+        const questionNavigation = document.getElementById('question-navigation');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const questionDots = document.getElementById('question-dots');
+        const finishBtn = document.getElementById('finish-btn');
+
+        // Function to get question type label
+        function getQuestionTypeLabel(type) {
+            const typeLabels = {
+                'multiple_choice': 'Pilihan Ganda',
+                'true_false': 'Benar/Salah',
+                'short_answer': 'Isian Singkat',
+                'matching': 'Menjodohkan'
+            };
+            return typeLabels[type] || type;
+        }
+
+        // Utility: shuffle array (needed for matching dropdown randomization)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Utility: build pairs from question object (fallback if pairs missing)
+        function buildPairsFromQuestion(question) {
+            if (Array.isArray(question.pairs) && question.pairs.length > 0) {
+                return question.pairs;
+            }
+            const pairs = [];
+            if (typeof question.answer === 'string' && question.answer.includes('→')) {
+                const rawPairs = question.answer.split('|');
+                rawPairs.forEach(raw => {
+                    const parts = raw.split('→');
+                    const left = (parts[0] || '').trim();
+                    const right = (parts[1] || '').trim();
+                    if (left && right) pairs.push({ left, right });
+                });
+            }
+            return pairs;
+        }
+
+        // Function to render a single question
+        function renderQuestion(index) {
+            if (index < 0 || index >= questionsData.length) {
+                return;
+            }
+
+            const q = questionsData[index];
+
+            // Clear existing question
+            questionsContainer.innerHTML = '';
+
+            const questionEl = document.createElement('div');
+            questionEl.className = 'question-block pt-4 question-spacing';
+            questionEl.dataset.index = index;
+            questionEl.dataset.type = q.type;
+
+            let content = '';
+
+            content += `
+                <div class="mb-2">
+                    <span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                        ${getQuestionTypeLabel(q.type)}
+                    </span>
+                </div>
+            `;
+
+            // Add instruction and case description in one container if either exists
+            if ((q.instruction && q.instruction.trim() !== '') || (q.caseDescription && q.caseDescription.trim() !== '')) {
+                content += `
+                    <div class="mb-2 p-2 bg-blue-50 border-l-4 border-blue-400 rounded-r text-xs">
+                        ${q.instruction && q.instruction.trim() !== '' ? q.instruction.trim() : ''}
+                        ${q.instruction && q.instruction.trim() !== '' && q.caseDescription && q.caseDescription.trim() !== '' ? '<br><br>' : ''}
+                        ${q.caseDescription && q.caseDescription.trim() !== '' ? q.caseDescription.trim() : ''}
+                    </div>
+                `;
+            }
+
+            content += `
+                <div class="mb-3">
+                    <p class="text-sm font-semibold text-gray-900 leading-relaxed">${q.question}</p>
+                </div>
+                <div class="options-container space-y-2">
+            `;
+
+            switch (q.type) {
+                case 'multiple_choice':
+                    content += `<div class="grid grid-cols-2 gap-2">`;
+                    q.options.forEach((option, optIndex) => {
+                        content += `
+                            <label class="flex items-center p-2.5 border-2 border-gray-300 hover:bg-gray-50 cursor-pointer transition-all duration-200 hover:shadow-sm option-spacing hover:border-blue-400">
+                                <input type="radio" name="question-${index}" value="${option}" class="form-radio h-4 w-4 text-blue-600 focus:ring-blue-500 flex-shrink-0">
+                                <span class="ml-2.5 text-xs text-gray-700 leading-relaxed">${option}</span>
+                            </label>
+                        `;
+                    });
+                    content += `</div>`;
+                    break;
+
+                case 'true_false':
+                    content += `
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="flex items-center p-2.5 border-2 border-gray-300 hover:bg-gray-50 cursor-pointer transition-all duration-200 hover:shadow-sm hover:border-blue-400">
+                                <input type="radio" name="question-${index}" value="true" class="form-radio h-4 w-4 text-blue-600 focus:ring-blue-500 flex-shrink-0">
+                                <span class="ml-2.5 text-xs text-gray-700">Benar</span>
+                            </label>
+                            <label class="flex items-center p-2.5 border-2 border-gray-300 hover:bg-gray-50 cursor-pointer transition-all duration-200 hover:shadow-sm hover:border-blue-400">
+                                <input type="radio" name="question-${index}" value="false" class="form-radio h-4 w-4 text-blue-600 focus:ring-blue-500 flex-shrink-0">
+                                <span class="ml-2.5 text-xs text-gray-700">Salah</span>
+                            </label>
+                        </div>
+                    `;
+                    break;
+
+                case 'short_answer':
+                    content += `
+                        <textarea type="text" name="question-${index}" class="block w-full border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs py-1 px-2" placeholder="Ketik jawaban Anda di sini..." style="height: 250px"></textarea>
+                    `;
+                    break;
+
+                case 'matching':
+                    const pairs = buildPairsFromQuestion(q);
+                    const leftItems = pairs.map(p => p.left);
+                    const rightItems = pairs.map(p => p.right);
+
+                    content += `<div class="space-y-2">`;
+                    leftItems.forEach((leftItem, pairIndex) => {
+                        // Acak opsi untuk setiap dropdown
+                        const shuffledRightItems = shuffleArray([...rightItems]);
+                        content += `
+                            <div class="flex items-center gap-3 p-2 bg-gray-50">
+                                <div class="p-2 bg-white border text-center font-medium text-xs border-gray-200 flex-1 min-w-0">${leftItem}</div>
+                                <div class="flex items-center justify-center flex-shrink-0">
+                                    <span class="text-gray-400 text-base">→</span>
+                                </div>
+                                <select name="question-${index}-${pairIndex}" class="block w-full border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs py-1 px-2 flex-1 min-w-0">
+                                    <option value="">Pilih pasangan...</option>
+                                    ${shuffledRightItems.map(rightItem => `<option value="${rightItem}">${rightItem}</option>`).join('')}
+                                </select>
+                            </div>
+                        `;
+                    });
+                    content += `</div>`;
+                    break;
+
+                default:
+                    content += `<p class="text-red-500">Jenis soal tidak dikenali: ${q.type}</p>`;
+                    break;
+            }
+
+            content += `</div>`;
+            questionEl.innerHTML = content;
+            questionsContainer.appendChild(questionEl);
+
+            // Update navigation state
+            updateNavigation();
+
+            // Add event listeners for form elements
+            addFormEventListeners();
+
+            // Restore user answers
+            restoreUserAnswers();
+        }
+
+        // Function to restore user answers
+        function restoreUserAnswers() {
+            const userAnswer = userAnswers[currentQuestionIndex];
+            if (!userAnswer) return;
+
+            const q = questionsData[currentQuestionIndex];
+
+            // Skip if only marked as doubtful
+            if (userAnswer.doubtful && !userAnswer.answer && !userAnswer.value && typeof userAnswer !== 'string' && typeof userAnswer !== 'object') {
+                return;
+            }
+
+            switch (q.type) {
+                case 'multiple_choice':
+                case 'true_false': {
+                    const answerValue = userAnswer.answer || userAnswer.value || userAnswer;
+                    const radio = questionsContainer.querySelector(`input[name="question-${currentQuestionIndex}"][value="${answerValue}"]`);
+                    if (radio) radio.checked = true;
+                    break;
+                }
+                case 'short_answer': {
+                    const answerValue = userAnswer.answer || userAnswer.value || userAnswer;
+                    const input = questionsContainer.querySelector(`input[name="question-${currentQuestionIndex}"]`);
+                    if (input) input.value = answerValue;
+                    break;
+                }
+                case 'matching': {
+                    const answerData = userAnswer.answer || userAnswer.value || userAnswer;
+                    if (typeof answerData === 'object') {
+                        Object.keys(answerData).forEach(pairIndex => {
+                            const select = questionsContainer.querySelector(`select[name="question-${currentQuestionIndex}-${pairIndex}"]`);
+                            if (select) select.value = answerData[pairIndex];
+                        });
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Function to update navigation display
+        function updateNavigation() {
+            // Update button states
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = currentQuestionIndex === questionsData.length - 1;
+
+            // Update question dots
+            updateQuestionDots();
+        }
+
+        // Function to update question dots
+        function updateQuestionDots() {
+            questionDots.innerHTML = '';
+            questionsData.forEach((_, index) => {
+                const dot = document.createElement('button');
+                let dotClass = 'w-8 h-8 text-xs font-medium transition-all duration-200 ';
+                
+                if (index === currentQuestionIndex) {
+                    // Soal yang sedang aktif - biru
+                    dotClass += 'bg-blue-600 text-white border-2 border-blue-800';
+                } else if (userAnswers[index] && userAnswers[index].doubtful) {
+                    // Soal yang ditandai ragu-ragu - kuning
+                    dotClass += 'bg-yellow-500 text-white border-2 border-yellow-600';
+                } else if (userAnswers[index] && (userAnswers[index].answer || userAnswers[index].value || typeof userAnswers[index] === 'string' || typeof userAnswers[index] === 'object')) {
+                    // Soal yang sudah dijawab - hijau
+                    dotClass += 'bg-green-500 text-white border-2 border-green-600';
+                } else {
+                    // Soal yang belum dijawab - abu-abu
+                    dotClass += 'bg-gray-200 text-gray-700 hover:bg-gray-300 border border-gray-300';
+                }
+                
+                dot.className = dotClass;
+                dot.textContent = index + 1;
+                dot.onclick = () => goToQuestion(index);
+                questionDots.appendChild(dot);
+            });
+        }
+
+        // Function to go to specific question
+        function goToQuestion(index) {
+            if (index >= 0 && index < questionsData.length) {
+                currentQuestionIndex = index;
+                renderQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Function to add event listeners to form elements
+        function addFormEventListeners() {
+            // Radio buttons
+            const radioButtons = questionsContainer.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    const questionIndex = parseInt(this.name.replace('question-', ''));
+                    if (!userAnswers[questionIndex]) {
+                        userAnswers[questionIndex] = {};
+                    }
+                    userAnswers[questionIndex].answer = this.value;
+                    userAnswers[questionIndex].doubtful = false; // Clear doubtful status when answering
+                    updateQuestionDots();
+                });
+            });
+
+            // Text inputs
+            const textInputs = questionsContainer.querySelectorAll('input[type="text"]');
+            textInputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    const questionIndex = parseInt(this.name.replace('question-', ''));
+                    if (!userAnswers[questionIndex]) {
+                        userAnswers[questionIndex] = {};
+                    }
+                    userAnswers[questionIndex].answer = this.value;
+                    userAnswers[questionIndex].doubtful = false; // Clear doubtful status when answering
+                    updateQuestionDots();
+                });
+            });
+
+            // Textarea for short answer
+            const textareas = questionsContainer.querySelectorAll('textarea');
+            textareas.forEach(textarea => {
+                textarea.addEventListener('input', function () {
+                    const questionIndex = parseInt(this.name.replace('question-', ''));
+                    if (!userAnswers[questionIndex]) {
+                        userAnswers[questionIndex] = {};
+                    }
+                    userAnswers[questionIndex].answer = this.value;
+                    userAnswers[questionIndex].doubtful = false; // Clear doubtful status when answering
+                    updateQuestionDots();
+                });
+            });
+
+            // Select dropdowns
+            const selects = questionsContainer.querySelectorAll('select');
+            selects.forEach(select => {
+                select.addEventListener('change', function () {
+                    const nameParts = this.name.split('-');
+                    const questionIndex = parseInt(nameParts[1]);
+                    const pairIndex = parseInt(nameParts[2]);
+
+                    if (!userAnswers[questionIndex]) {
+                        userAnswers[questionIndex] = {};
+                    }
+                    if (!userAnswers[questionIndex].answer) {
+                        userAnswers[questionIndex].answer = {};
+                    }
+                    userAnswers[questionIndex].answer[pairIndex] = this.value;
+                    userAnswers[questionIndex].doubtful = false; // Clear doubtful status when answering
+                    updateQuestionDots();
+
+                    // Nonaktifkan opsi yang sudah dipilih di dropdown lain (hindari ganda)
+                    const currentQuestion = questionsData[questionIndex];
+                    if (currentQuestion && currentQuestion.type === 'matching') {
+                        const allSelects = questionsContainer.querySelectorAll(`select[name^="question-${questionIndex}-"]`);
+                        const selectedValues = new Set();
+                        allSelects.forEach(s => {
+                            if (s.value) selectedValues.add(s.value);
+                        });
+                        allSelects.forEach(s => {
+                            const options = s.querySelectorAll('option');
+                            options.forEach(opt => {
+                                if (opt.value === '') return; // skip placeholder
+                                // aktifkan semua dulu
+                                opt.disabled = false;
+                                // jika nilai sudah dipilih di select lain, nonaktifkan
+                                if (selectedValues.has(opt.value) && s.value !== opt.value) {
+                                    opt.disabled = true;
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+        }
+
+        // Navigation button event listeners
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion(currentQuestionIndex);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questionsData.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion(currentQuestionIndex);
+            }
+        });
+
+        // Function to render all questions (for restart)
+        function renderQuestions() {
+            if (questionsData.length === 0) {
+                return;
+            }
+
+            renderQuestion(0);
+        }
+
+        // Function to calculate the score
+        function calculateScore() {
+            let score = 0;
+            let correctAnswers = 0;
+
+            console.log('=== CALCULATING SCORE ===');
+            console.log('questionsData length:', questionsData.length);
+            console.log('userAnswers:', userAnswers);
+
+            questionsData.forEach((q, index) => {
+                let isCorrect = false;
+                const userAnswer = userAnswers[index];
+                
+                console.log(`Question ${index + 1}:`, {
+                    type: q.type,
+                    question: q.question,
+                    correctAnswer: q.answer,
+                    userAnswer: userAnswer
+                });
+                
+                // Extract the actual answer value from userAnswer object
+                let answerValue = null;
+                if (userAnswer) {
+                    if (typeof userAnswer === 'string') {
+                        answerValue = userAnswer;
+                    } else if (userAnswer.answer) {
+                        answerValue = userAnswer.answer;
+                    } else if (userAnswer.value) {
+                        answerValue = userAnswer.value;
+                    }
+                }
+
+                switch (q.type) {
+                    case 'multiple_choice': {
+                        if (answerValue && answerValue === q.answer) {
+                            isCorrect = true;
+                        }
+                        break;
+                    }
+                    case 'true_false': {
+                        if (answerValue && answerValue === String(q.answer)) {
+                            isCorrect = true;
+                        }
+                        break;
+                    }
+                    case 'short_answer': {
+                        if (answerValue && answerValue.trim().toLowerCase() === q.answer.toLowerCase()) {
+                            isCorrect = true;
+                        }
+                        break;
+                    }
+                    case 'matching': {
+                        if (answerValue && typeof answerValue === 'object') {
+                            let allPairsCorrect = true;
+                            q.pairs.forEach((pair, pairIndex) => {
+                                if (answerValue[pairIndex] !== pair.right) {
+                                    allPairsCorrect = false;
+                                }
+                            });
+                            if (allPairsCorrect) isCorrect = true;
+                        }
+                        break;
+                    }
+                }
+                
+                console.log(`Question ${index + 1} result:`, {
+                    answerValue: answerValue,
+                    isCorrect: isCorrect
+                });
+                
+                if (isCorrect) correctAnswers++;
+            });
+
+            score = Math.round((correctAnswers / questionsData.length) * 100);
+            
+            console.log('Final score calculation:', {
+                correctAnswers: correctAnswers,
+                totalQuestions: questionsData.length,
+                score: score
+            });
+            
+            return { score, correctAnswers, total: questionsData.length };
+        }
+
+        // Event Listeners
+        submitBtn.addEventListener('click', () => {
+            // Mark current question as doubtful
+            userAnswers[currentQuestionIndex] = userAnswers[currentQuestionIndex] || {};
+            userAnswers[currentQuestionIndex].doubtful = true;
+            
+            // Update question dots to show doubtful status
+            updateQuestionDots();
+            
+            // Show feedback
+            const currentDot = questionDots.children[currentQuestionIndex];
+            if (currentDot) {
+                currentDot.classList.remove('bg-blue-600', 'bg-green-500', 'bg-gray-200');
+                currentDot.classList.add('bg-yellow-500');
+            }
+        });
+
+        finishBtn.addEventListener('click', () => {
+            if (window.confirm('Apakah Anda yakin ingin menyelesaikan ujian?')) {
+                // Simpan data exam ke sessionStorage
+                sessionStorage.setItem('examQuestions', JSON.stringify(questionsData));
+                sessionStorage.setItem('examAnswers', JSON.stringify(userAnswers));
+                
+                // Redirect ke exam result page
+                window.location.href = 'exam-result.html';
+            }
+        });
+
+
+
+        // Function to fetch questions from Firebase
+        async function fetchQuestionsFromFirebase() {
+            try {
+                const snapshot = await get(ref(database, '/questions'));
+
+                if (snapshot.exists()) {
+                    questionsData = snapshot.val();
+
+                    if (Array.isArray(questionsData) && questionsData.length > 0) {
+                        renderQuestions();
+                        if (loadingEl) loadingEl.classList.add('hidden');
+                        if (questionNavigation) questionNavigation.classList.remove('hidden');
+                        if (submitSection) submitSection.classList.remove('hidden');
+                    } else {
+                        throw new Error("Format data soal tidak valid atau soal kosong.");
+                    }
+                } else {
+                    throw new Error("Tidak ada data soal di Firebase. Silakan tambahkan soal melalui admin panel.");
+                }
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+                if (loadingEl) {
+                    loadingEl.innerHTML = `
+                    <div class="text-center py-8">
+                        <p class="text-red-500 font-semibold mb-4">Gagal memuat soal dari database</p>
+                        <div class="bg-yellow-50 border border-yellow-200 p-4 mb-4">
+                            <p class="text-yellow-800 text-sm mb-2"><strong>Kemungkinan penyebab:</strong></p>
+                            <ul class="text-yellow-700 text-sm text-left list-disc list-inside space-y-1">
+                                <li>Aturan keamanan Firebase belum diubah untuk mengizinkan akses baca</li>
+                                <li>Database Firebase kosong atau belum ada data soal</li>
+                                <li>Masalah koneksi internet</li>
+                                <li>Konfigurasi Firebase tidak valid</li>
+                            </ul>
+                        </div>
+                        <p class="text-gray-600 mb-4">${error.message}</p>
+                        <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 transition-all duration-200 hover:shadow-lg text-sm">
+                            Coba Lagi
+                        </button>
+                    </div>
+                `;
+                }
+            }
+        }
+
+        // Set up real-time listener for questions
+        function setupRealtimeListener() {
+            const questionsRef = ref(database, '/questions');
+            onValue(questionsRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const newQuestions = snapshot.val();
+
+                    if (Array.isArray(newQuestions) && newQuestions.length > 0) {
+                        questionsData = newQuestions;
+
+                        // Only update UI if we're not currently showing a question
+                        if (questionsContainer && questionsContainer.children.length === 0) {
+                            renderQuestions();
+                            if (loadingEl) loadingEl.classList.add('hidden');
+                            if (questionNavigation) questionNavigation.classList.remove('hidden');
+                            if (submitSection) submitSection.classList.remove('hidden');
+                        }
+                    }
+                }
+            }, (error) => {
+                console.error("Real-time listener error:", error);
+            });
+        }
+
+
+
+
+
+        // Function to check if user is logged in
+        function checkUserLogin() {
+            const currentUsername = sessionStorage.getItem('currentUsername');
+            const currentPassword = sessionStorage.getItem('currentPassword');
+            
+            if (!currentUsername || !currentPassword) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Main function to start the exam
+        async function startExam() {
+            try {
+                // Check if user is logged in first
+                if (!checkUserLogin()) {
+                    return;
+                }
+
+                // Set up real-time listener first
+                setupRealtimeListener();
+
+                // Then fetch initial data
+                await fetchQuestionsFromFirebase();
+
+
+
+            } catch (error) {
+                console.error("Error during exam startup: ", error);
+            }
+        }
+
+
+
+        // Start the exam on page load
+        startExam();
+    </script>
+</body>
+
+</html>

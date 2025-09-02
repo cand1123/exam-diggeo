@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="img.png">
+    <title>
+        Login Exam
+    </title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Use Inter font family */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Remove Tailwind space-y-reverse */
+        .bg-gray-100 {
+            --tw-space-y-reverse: initial !important;
+        }
+        
+        /* Remove space-y-reverse from login form */
+        #loginForm {
+            --tw-space-y-reverse: initial !important;
+        }
+        
+        /* Remove space-y-reverse from all space-y utilities */
+        .space-y-5 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: initial !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-md p-6 space-y-5 bg-white rounded-lg shadow-lg">
+        <div class="flex flex-col items-center mb-4">
+            <img src="img.png" alt="Logo" class="w-16 h-16 mb-2">
+            <h1 class="text-lg font-bold text-center text-gray-800">Selamat Datang</h1>
+            <p class="text-center text-gray-500 text-base">Silakan login untuk melanjutkan</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label for="username" class="text-sm font-medium text-gray-700">Username</label>
+                <input type="text" id="username" name="username" required
+                    class="w-full px-3 py-2 mt-1 text-sm text-gray-700 bg-gray-50 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition duration-300">
+            </div>
+            <div>
+                <label for="password" class="text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" required
+                    class="w-full px-3 py-2 mt-1 text-sm text-gray-700 bg-gray-50 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition duration-300">
+            </div>
+            <div>
+                <button type="submit" id="loginButton"
+                    class="w-full px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-blue-500 transition duration-300 flex items-center justify-center">
+                    <span id="buttonText">Login</span>
+                    <!-- Spinner for loading state -->
+                    <svg id="spinner" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </div>
+        </form>
+
+
+
+        <!-- User Info Popup Modal -->
+        <div id="userInfoModal" class="hidden fixed inset-0 bg-black bg-opacity-30 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+            <div class="relative w-full max-w-md bg-white shadow-lg my-4">
+                <!-- Header -->
+                <div class="bg-blue-600 p-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-white">Informasi Pengguna</h3>
+                        <button id="closeUserInfoModal" class="text-white hover:text-gray-200 transition-colors duration-200 text-xl font-bold">×</button>
+                    </div>
+                </div>
+                
+                <!-- Content -->
+                <div class="p-4">
+                    <div class="space-y-3">
+                        <!-- User Info -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-xs text-gray-500">Nama</span>
+                                <span id="userFullName" class="text-sm font-medium text-gray-900"></span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-xs text-gray-500">Role</span>
+                                <span id="userRole" class="text-sm font-medium text-gray-900"></span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-xs text-gray-500">Kelas/Jabatan</span>
+                                <span id="userClass" class="text-sm font-medium text-gray-900"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Button -->
+                        <div class="pt-3">
+                            <button id="continueBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 transition-colors duration-200 text-sm">
+                                Lanjutkan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Popup Modal -->
+        <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-30 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+            <div class="relative w-full max-w-sm bg-white shadow-lg my-4">
+                <!-- Header -->
+                <div class="bg-red-600 p-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-white">Login Gagal</h3>
+                        <button id="closeErrorModal" class="text-white hover:text-gray-200 transition-colors duration-200 text-xl font-bold">×</button>
+                    </div>
+                </div>
+                
+                <!-- Content -->
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <!-- Error Message -->
+                        <div class="bg-red-50 p-4 border border-red-200">
+                            <p class="text-xs font-medium text-red-500 uppercase tracking-wide mb-1">Pesan Error</p>
+                            <p id="errorMessage" class="text-sm font-semibold text-red-700"></p>
+                        </div>
+                        
+                        <!-- Action Button -->
+                        <div class="pt-2">
+                            <button id="okErrorBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 transition-colors duration-200">
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import functions from the Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, get, child, set, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // Cek apakah user sudah login saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Halaman dimuat, user harus login
+        });
+
+        // Your web app's Firebase configuration - KHUSUS LOGIN
+        const firebaseConfig = {
+            apiKey: "AIzaSyASnGEE-S_-1GfsqitrV26KVbUGCKLRxW8",
+            authDomain: "test-login-e3c51.firebaseapp.com",
+            databaseURL: "https://test-login-e3c51-default-rtdb.firebaseio.com",
+            projectId: "test-login-e3c51",
+            storageBucket: "test-login-e3c51.firebasestorage.app",
+            messagingSenderId: "410742520241",
+            appId: "1:410742520241:web:f9f13bf4fa2e10a701a590",
+            measurementId: "G-TEYTCLQVYM"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Get form and UI elements
+        const loginForm = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const buttonText = document.getElementById('buttonText');
+        const spinner = document.getElementById('spinner');
+        
+        // Get modal elements
+        const userInfoModal = document.getElementById('userInfoModal');
+        const closeUserInfoModal = document.getElementById('closeUserInfoModal');
+        const continueBtn = document.getElementById('continueBtn');
+        const userFullName = document.getElementById('userFullName');
+        const userRole = document.getElementById('userRole');
+        const userClass = document.getElementById('userClass');
+        
+        // Get error modal elements
+        const errorModal = document.getElementById('errorModal');
+        const closeErrorModal = document.getElementById('closeErrorModal');
+        const okErrorBtn = document.getElementById('okErrorBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        // Store current user data
+        let currentUser = null;
+
+        // Add event listener for form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Get user input
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+
+            // Show loading state
+            setLoading(true);
+
+            try {
+                // Ambil data user dari Firebase
+                const dbRef = ref(db); 
+                const snapshot = await get(dbRef);
+
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    
+                    // Extract users from the object (exclude examResults)
+                    const usersArray = [];
+                    for (const key in data) {
+                        if (key !== 'examResults' && data[key] && typeof data[key] === 'object') {
+                            usersArray.push(data[key]);
+                        }
+                    }
+                    
+                    if (usersArray.length > 0) {
+                        // Cari user yang sesuai dengan kredensial
+                        const foundUser = usersArray.find(user => {
+                            return user && 
+                                   user.Username === usernameInput && 
+                                   user.Password === passwordInput;
+                        });
+                        
+                        if (foundUser) {
+                            // Simpan data user
+                            currentUser = foundUser;
+                            
+                            // Tampilkan modal informasi user
+                            populateUserInfoModal(foundUser);
+                            userInfoModal.classList.remove('hidden');
+                        } else {
+                            showErrorModal('Username atau password salah.');
+                        }
+
+                    } else {
+                        showErrorModal('Format data pengguna tidak valid atau kosong.');
+                    }
+
+                } else {
+                    showErrorModal('Database tidak ditemukan atau kosong.');
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                showErrorModal('Terjadi kesalahan saat mengambil data dari Firebase. Silakan coba lagi.');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        /**
+         * Displays an error modal to the user.
+         * @param {string} text - The error message to display.
+         */
+        function showErrorModal(text) {
+            errorMessage.textContent = text;
+            errorModal.classList.remove('hidden');
+        }
+
+        /**
+         * Toggles the loading state of the login button.
+         * @param {boolean} isLoading - True to show spinner, false to hide.
+         */
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loginButton.disabled = true;
+                buttonText.classList.add('hidden');
+                spinner.classList.remove('hidden');
+            } else {
+                loginButton.disabled = false;
+                buttonText.classList.remove('hidden');
+                spinner.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Populates the user info modal with user data.
+         * @param {Object} user - The user object containing user information.
+         */
+        function populateUserInfoModal(user) {
+            userFullName.textContent = user["Full Name"] || 'Tidak tersedia';
+            userRole.textContent = user.Role || 'Tidak tersedia';
+            userClass.textContent = user.Class || 'Tidak tersedia';
+        }
+
+        /**
+         * Clears previous user data from sessionStorage
+         */
+        function clearPreviousUserData() {
+            sessionStorage.removeItem('currentUsername');
+            sessionStorage.removeItem('currentPassword');
+            sessionStorage.removeItem('currentUserData');
+        }
+
+        /**
+         * Stores current user data to sessionStorage (temporary session data)
+         */
+        function storeUserData(user) {
+            if (!user) return;
+            
+            // Simpan kredensial user di sessionStorage untuk autentikasi sesi
+            sessionStorage.setItem('currentUsername', user.Username || user.username || '');
+            sessionStorage.setItem('currentPassword', user.Password || user.password || '');
+            sessionStorage.setItem('currentUserData', JSON.stringify({
+                fullName: user["Full Name"] || user.fullName || '',
+                username: user.Username || user.username || '',
+                role: user.Role || user.role || '',
+                class: user.Class || user.class || ''
+            }));
+        }
+
+        /**
+         * Simpan hasil ujian ke Firebase saat login
+         */
+        async function saveExamResultOnLogin(user) {
+            try {
+                const fullName = user["Full Name"] || user.fullName || user.Username || user.username || 'Pengguna';
+                
+                // Ambil data soal dari Firebase untuk perhitungan
+                const questionsRef = ref(db, 'questions');
+                const questionsSnapshot = await get(questionsRef);
+                
+                let examResultData = {
+                    studentName: fullName,
+                    score: 0,
+                    correctAnswers: 0,
+                    totalQuestions: 0,
+                    wrongAnswers: 0,
+                    timestamp: new Date().toISOString(),
+                    userAnswers: [],
+                    questionsData: []
+                };
+
+                if (questionsSnapshot.exists()) {
+                    const questionsData = questionsSnapshot.val();
+                    if (Array.isArray(questionsData) && questionsData.length > 0) {
+                        // Simulasi jawaban user (untuk testing, bisa diganti dengan jawaban real)
+                        const simulatedAnswers = generateSimulatedAnswers(questionsData);
+                        
+                        // Hitung score berdasarkan jawaban
+                        const result = calculateScoreFromAnswers(questionsData, simulatedAnswers);
+                        
+                        examResultData = {
+                            studentName: fullName,
+                            score: result.score,
+                            correctAnswers: result.correctAnswers,
+                            totalQuestions: result.total,
+                            wrongAnswers: result.total - result.correctAnswers,
+                            timestamp: new Date().toISOString(),
+                            userAnswers: simulatedAnswers,
+                            questionsData: questionsData
+                        };
+                    }
+                }
+                
+                // Simpan ke Firebase
+                const examResultsRef = ref(db, 'examResults');
+                const newResultRef = push(examResultsRef);
+                await set(newResultRef, examResultData);
+                
+            } catch (error) {
+                console.error('Error saving exam result on login:', error);
+            }
+        }
+
+        /**
+         * Generate simulated answers for testing
+         */
+        function generateSimulatedAnswers(questionsData) {
+            const answers = [];
+            const totalQuestions = questionsData.length;
+            
+            // Tentukan berapa banyak yang benar (antara 60-90%)
+            const correctPercentage = 0.6 + (Math.random() * 0.3); // 60-90%
+            const targetCorrect = Math.floor(totalQuestions * correctPercentage);
+            
+            // Buat array untuk menentukan mana yang benar/salah
+            const correctIndices = [];
+            while (correctIndices.length < targetCorrect) {
+                const randomIndex = Math.floor(Math.random() * totalQuestions);
+                if (!correctIndices.includes(randomIndex)) {
+                    correctIndices.push(randomIndex);
+                }
+            }
+            
+            questionsData.forEach((question, index) => {
+                const shouldBeCorrect = correctIndices.includes(index);
+                
+                switch (question.type) {
+                    case 'multiple_choice':
+                        if (shouldBeCorrect) {
+                            answers[index] = question.answer; // Jawaban benar
+                        } else {
+                            // Jawaban salah (pilih opsi lain)
+                            const options = question.options || [];
+                            const wrongOptions = options.filter(opt => opt !== question.answer);
+                            answers[index] = wrongOptions[Math.floor(Math.random() * wrongOptions.length)] || 'A';
+                        }
+                        break;
+                    case 'true_false':
+                        answers[index] = shouldBeCorrect ? String(question.answer) : String(!question.answer);
+                        break;
+                    case 'short_answer':
+                        answers[index] = shouldBeCorrect ? question.answer : 'wrong answer';
+                        break;
+                    case 'matching':
+                        if (shouldBeCorrect) {
+                            // Jawaban benar untuk matching
+                            const correctPairs = {};
+                            question.pairs.forEach((pair, pairIndex) => {
+                                correctPairs[pairIndex] = pair.right;
+                            });
+                            answers[index] = correctPairs;
+                        } else {
+                            // Jawaban salah untuk matching
+                            const wrongPairs = {};
+                            question.pairs.forEach((pair, pairIndex) => {
+                                const wrongOptions = question.pairs.filter(p => p.right !== pair.right);
+                                wrongPairs[pairIndex] = wrongOptions[Math.floor(Math.random() * wrongOptions.length)]?.right || 'A';
+                            });
+                            answers[index] = wrongPairs;
+                        }
+                        break;
+                    default:
+                        answers[index] = question.answer;
+                }
+            });
+            
+            return answers;
+        }
+
+        /**
+         * Calculate score from questions and answers
+         */
+        function calculateScoreFromAnswers(questionsData, userAnswers) {
+            let correctAnswers = 0;
+            
+            questionsData.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                let isCorrect = false;
+                
+                switch (question.type) {
+                    case 'multiple_choice':
+                        if (userAnswer === question.answer) {
+                            isCorrect = true;
+                        }
+                        break;
+                    case 'true_false':
+                        if (userAnswer === String(question.answer)) {
+                            isCorrect = true;
+                        }
+                        break;
+                    case 'short_answer':
+                        if (userAnswer && userAnswer.trim().toLowerCase() === question.answer.toLowerCase()) {
+                            isCorrect = true;
+                        }
+                        break;
+                    case 'matching':
+                        if (userAnswer && typeof userAnswer === 'object') {
+                            let allPairsCorrect = true;
+                            question.pairs.forEach((pair, pairIndex) => {
+                                if (userAnswer[pairIndex] !== pair.right) {
+                                    allPairsCorrect = false;
+                                }
+                            });
+                            if (allPairsCorrect) isCorrect = true;
+                        }
+                        break;
+                }
+                
+                if (isCorrect) correctAnswers++;
+            });
+            
+            const score = Math.round((correctAnswers / questionsData.length) * 100);
+            return { score, correctAnswers, total: questionsData.length };
+        }
+
+        /**
+         * Redirects user based on their role.
+         */
+        function redirectUser() {
+            if (!currentUser) return;
+            
+            const normalizedRole = currentUser.Role ? currentUser.Role.toString().trim().toLowerCase() : '';
+            
+            if (normalizedRole === 'student') {
+                window.location.href = 'student-exam.html';
+            } else if (normalizedRole === 'admin') {
+                window.location.href = 'mode-admin.html';
+            } else {
+                window.location.href = 'mode-admin.html';
+            }
+        }
+
+        // Event listeners for user info modal
+        closeUserInfoModal.addEventListener('click', () => {
+            userInfoModal.classList.add('hidden');
+        });
+
+        continueBtn.addEventListener('click', async () => {
+            // Clear previous user data and exam results
+            clearPreviousUserData();
+            
+            // Store current user data
+            storeUserData(currentUser);
+            
+            // Simpan hasil ujian ke Firebase saat login
+            await saveExamResultOnLogin(currentUser);
+            
+            userInfoModal.classList.add('hidden');
+            redirectUser();
+        });
+
+        // Close user info modal when clicking outside
+        userInfoModal.addEventListener('click', (e) => {
+            if (e.target === userInfoModal) {
+                userInfoModal.classList.add('hidden');
+            }
+        });
+
+        // Event listeners for error modal
+        closeErrorModal.addEventListener('click', () => {
+            errorModal.classList.add('hidden');
+        });
+
+        okErrorBtn.addEventListener('click', () => {
+            errorModal.classList.add('hidden');
+        });
+
+        // Close error modal when clicking outside
+        errorModal.addEventListener('click', (e) => {
+            if (e.target === errorModal) {
+                errorModal.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="img.png">
+    <title>Hasil Ujian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        html {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .exam-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .exam-layout {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(90vh - 120px);
+        }
+
+        .exam-main {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto px-2 sm:px-4 lg:px-6 exam-container">
+        <header class="text-center mb-6 mt-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">Hasil Ujian</h1>
+            <p class="text-sm text-gray-600">Berikut adalah hasil ujian yang telah Anda selesaikan</p>
+        </header>
+
+        <div class="exam-layout">
+            <main class="exam-main">
+                <!-- Exam Result Section -->
+                <div id="exam-result">
+
+
+                    <!-- Main Content -->
+                    <div class="bg-white p-6">
+                        <!-- Student Info -->
+                        <div class="text-center mb-8">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 border border-gray-300 rounded-lg mb-4">
+                                <span id="result-score" class="text-lg font-bold text-gray-800">...</span>
+                            </div>
+                            <h3 id="result-student-name" class="text-lg font-semibold text-gray-800 mb-2">Memuat nama...</h3>
+                            <p id="result-score-details" class="text-sm text-gray-600">Memuat detail skor...</p>
+                        </div>
+
+                        <!-- Score Statistics -->
+                        <div class="mb-5">
+                            <div class="flex justify-center space-x-8">
+                                <!-- Correct Answers -->
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-green-100 border border-green-300 rounded-lg flex items-center justify-center mb-2">
+                                        <div id="result-correct" class="text-lg font-bold text-green-600">...</div>
+                                    </div>
+                                    <div class="text-xs text-gray-600 font-medium">Benar</div>
+                                </div>
+
+                                <!-- Wrong Answers -->
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-red-100 border border-red-300 rounded-lg flex items-center justify-center mb-2">
+                                        <div id="result-wrong" class="text-lg font-bold text-red-600">...</div>
+                                    </div>
+                                    <div class="text-xs text-gray-600 font-medium">Salah</div>
+                                </div>
+
+                                <!-- Total Questions -->
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-blue-100 border border-blue-300 rounded-lg flex items-center justify-center mb-2">
+                                        <div id="result-total" class="text-lg font-bold text-blue-600">...</div>
+                                    </div>
+                                    <div class="text-xs text-gray-600 font-medium">Total</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Performance Message -->
+                        <div id="performance-message" class="bg-gray-50 border border-gray-200 p-4 mb-6 rounded-lg">
+                            <div class="text-center">
+                                <h4 class="text-sm font-semibold text-gray-800 mb-2">Feedback</h4>
+                                <p id="performance-text" class="text-xs text-gray-700 leading-relaxed">Memuat pesan performa...</p>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="retake-exam-btn" class="bg-gray-800 hover:bg-gray-700 text-white text-xs font-medium py-2 px-2 transition-colors duration-200">
+                                Ulangi Ujian
+                            </button>
+                            
+                            <button id="logout-btn" class="bg-gray-400 hover:bg-gray-500 text-white text-xs font-medium py-2 px-2 transition-colors duration-200">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, get, set, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // Firebase configuration - SAMA DENGAN INDEX.HTML
+        const firebaseConfig = {
+            apiKey: "AIzaSyASnGEE-S_-1GfsqitrV26KVbUGCKLRxW8",
+            authDomain: "test-login-e3c51.firebaseapp.com",
+            databaseURL: "https://test-login-e3c51-default-rtdb.firebaseio.com",
+            projectId: "test-login-e3c51",
+            storageBucket: "test-login-e3c51.firebasestorage.app",
+            messagingSenderId: "410742520241",
+            appId: "1:410742520241:web:f9f13bf4fa2e10a701a590",
+            measurementId: "G-TEYTCLQVYM"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Global variables
+        let questionsData = [];
+        let userAnswers = {};
+
+        // Function to get performance message based on score
+        function getPerformanceMessage(score) {
+            if (score >= 90) {
+                return 'Sangat bagus! Anda telah menguasai materi dengan sangat baik. Pertahankan prestasi ini!';
+            } else if (score >= 80) {
+                return 'Bagus! Anda telah menguasai materi dengan baik. Terus tingkatkan pemahaman Anda!';
+            } else if (score >= 70) {
+                return 'Cukup baik! Anda sudah memahami sebagian besar materi. Perlu sedikit peningkatan lagi.';
+            } else if (score >= 60) {
+                return 'Perlu peningkatan! Anda sudah memahami beberapa materi, tapi masih perlu belajar lebih giat.';
+            } else {
+                return 'Perlu belajar lebih giat! Silakan pelajari kembali materi dan coba lagi.';
+            }
+        }
+
+        // Function to calculate the score
+        function calculateScore() {
+            let score = 0;
+            let correctAnswers = 0;
+
+
+
+            questionsData.forEach((q, index) => {
+                let isCorrect = false;
+                const userAnswer = userAnswers[index];
+                
+
+                
+                // Extract the actual answer value from userAnswer object
+                let answerValue = null;
+                if (userAnswer) {
+                    if (typeof userAnswer === 'string') {
+                        answerValue = userAnswer;
+                    } else if (userAnswer.answer) {
+                        answerValue = userAnswer.answer;
+                    } else if (userAnswer.value) {
+                        answerValue = userAnswer.value;
+                    }
+                }
+
+                switch (q.type) {
+                    case 'multiple_choice': {
+                        if (answerValue && answerValue === q.answer) {
+                            isCorrect = true;
+                        }
+                        break;
+                    }
+                    case 'true_false': {
+                        if (answerValue && answerValue === String(q.answer)) {
+                            isCorrect = true;
+                        }
+                        break;
+                    }
+                    case 'short_answer': {
+                        if (answerValue && answerValue.trim().toLowerCase() === q.answer.toLowerCase()) {
+                            isCorrect = true;
+                        }
+                        break;
+                    }
+                    case 'matching': {
+                        if (answerValue && typeof answerValue === 'object') {
+                            let allPairsCorrect = true;
+                            q.pairs.forEach((pair, pairIndex) => {
+                                if (answerValue[pairIndex] !== pair.right) {
+                                    allPairsCorrect = false;
+                                }
+                            });
+                            if (allPairsCorrect) isCorrect = true;
+                        }
+                        break;
+                    }
+                }
+                
+
+                
+                if (isCorrect) correctAnswers++;
+            });
+
+            score = Math.round((correctAnswers / questionsData.length) * 100);
+            
+
+            
+            return { score, correctAnswers, total: questionsData.length };
+        }
+
+        // Function to save exam result to Firebase
+        async function saveExamResultToFirebase(result, studentName) {
+            try {
+                const examResultData = {
+                    studentName: studentName,
+                    score: result.score,
+                    correctAnswers: result.correctAnswers,
+                    totalQuestions: result.total,
+                    wrongAnswers: result.total - result.correctAnswers,
+                    timestamp: new Date().toISOString(),
+                    userAnswers: userAnswers,
+                    questionsData: questionsData
+                };
+
+                const examResultsRef = ref(database, 'examResults');
+                const newResultRef = push(examResultsRef);
+                await set(newResultRef, examResultData);
+                
+
+            } catch (error) {
+                console.error('Error saving exam result:', error);
+            }
+        }
+
+        // Function to show exam result
+        function showExamResult() {
+            // Calculate score
+            const result = calculateScore();
+            
+            // Get user data
+            const currentUserData = sessionStorage.getItem('currentUserData');
+            let studentName = 'Pengguna';
+            
+            if (currentUserData) {
+                try {
+                    const userData = JSON.parse(currentUserData);
+                    studentName = userData.fullName || userData.username || 'Pengguna';
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                }
+            }
+            
+            // Update result display
+            document.getElementById('result-student-name').textContent = studentName;
+            document.getElementById('result-score').textContent = result.score;
+            document.getElementById('result-score-details').textContent = `Anda menjawab benar ${result.correctAnswers} dari ${result.total} pertanyaan.`;
+            document.getElementById('result-correct').textContent = result.correctAnswers;
+            document.getElementById('result-wrong').textContent = result.total - result.correctAnswers;
+            document.getElementById('result-total').textContent = result.total;
+            
+            // Update performance message
+            const performanceText = getPerformanceMessage(result.score);
+            document.getElementById('performance-text').textContent = performanceText;
+            
+            // Update score color based on performance
+            const scoreElement = document.getElementById('result-score');
+            const scoreContainer = scoreElement.parentElement;
+            if (result.score >= 80) {
+                scoreContainer.className = 'inline-flex items-center justify-center w-16 h-16 bg-gray-800 border border-gray-600 rounded-lg mb-4';
+                scoreElement.className = 'text-lg font-bold text-white';
+            } else if (result.score >= 60) {
+                scoreContainer.className = 'inline-flex items-center justify-center w-16 h-16 bg-gray-600 border border-gray-500 rounded-lg mb-4';
+                scoreElement.className = 'text-lg font-bold text-white';
+            } else {
+                scoreContainer.className = 'inline-flex items-center justify-center w-16 h-16 bg-gray-400 border border-gray-300 rounded-lg mb-4';
+                scoreElement.className = 'text-lg font-bold text-white';
+            }
+            
+            // Save result to Firebase
+            saveExamResultToFirebase(result, studentName);
+        }
+
+        // Function to check if user is logged in
+        function checkUserLogin() {
+            const currentUsername = sessionStorage.getItem('currentUsername');
+            const currentPassword = sessionStorage.getItem('currentPassword');
+            
+            if (!currentUsername || !currentPassword) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Function to load exam data from sessionStorage
+        function loadExamData() {
+            try {
+                const storedQuestions = sessionStorage.getItem('examQuestions');
+                const storedAnswers = sessionStorage.getItem('examAnswers');
+                
+                if (storedQuestions) {
+                    questionsData = JSON.parse(storedQuestions);
+                }
+                
+                if (storedAnswers) {
+                    userAnswers = JSON.parse(storedAnswers);
+                }
+                
+
+                
+                if (questionsData.length > 0) {
+                    showExamResult();
+                } else {
+                    console.error('No exam data found');
+                    alert('Tidak ada data ujian yang ditemukan. Silakan mulai ujian terlebih dahulu.');
+                    window.location.href = 'student-exam.html';
+                }
+            } catch (error) {
+                console.error('Error loading exam data:', error);
+                alert('Terjadi kesalahan saat memuat data ujian. Silakan coba lagi.');
+                window.location.href = 'student-exam.html';
+            }
+        }
+
+        // Event listeners for result buttons
+        document.getElementById('retake-exam-btn').addEventListener('click', () => {
+            // Clear exam data and redirect to exam
+            sessionStorage.removeItem('examQuestions');
+            sessionStorage.removeItem('examAnswers');
+            window.location.href = 'student-exam.html';
+        });
+
+
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            // Clear session and redirect to login
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (!checkUserLogin()) {
+                return;
+            }
+            
+            // Load exam data and show result
+            loadExamData();
+        });
+    </script>
+</body>
+
+</html>

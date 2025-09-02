@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="img.png">
+    <title>
+        Admin Digital Geography Learning Exam
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Main Content -->
+    <div id="mainContent">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg rounded-lg mb-4">
+            <div class="max-w-7xl mx-auto px-3">
+                <div class="flex justify-between items-center py-2">
+                    <div class="flex items-center space-x-6">
+                        <div class="flex flex-col">
+                            <a href="#" class="nav-brand text-lg font-bold text-blue-600">Admin Dashboard</a>
+                            <p class="nav-subtitle text-sm text-gray-600">Selamat datang, <span id="adminName">%DISPLAY_NAME%</span></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <a href="#" class="nav-link px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm" id="logoutBtn" onclick="showLogoutModal()">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Container -->
+        <div class="container">
+            <!-- Quick Navigation Cards -->
+            <div class="quick-nav-grid">
+                <div class="quick-nav-card">
+                    <h3>Manajemen Pengguna</h3>
+                    <p>Kelola data pengguna, siswa, dan admin</p>
+                    <a href="user-mangement.html">Akses Halaman</a>
+                    <div class="icon">👥</div>
+                </div>
+                
+                <div class="quick-nav-card">
+                    <h3>Manajemen Soal</h3>
+                    <p>Kelola soal ujian dan pertanyaan</p>
+                    <a href="quiz-management.html">Akses Halaman</a>
+                    <div class="icon">📝</div>
+                </div>
+                
+                <div class="quick-nav-card">
+                    <h3>Hasil Ujian</h3>
+                    <p>Lihat dan kelola hasil ujian peserta didik</p>
+                    <a href="exam-results.html">Akses Halaman</a>
+                    <div class="icon">📊</div>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="tabContent">
+                <!-- Content will be added here -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2024 Sistem Ujian. Semua hak dilindungi.</p>
+            </div>
+        </footer>
+
+        <!-- Modal Konfirmasi Logout -->
+        <div id="logoutModal" class="modal-overlay hidden">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="text-xl font-semibold text-gray-800">Konfirmasi Logout</h3>
+                    <button onclick="closeLogoutModal()" class="modal-close-btn">×</button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-gray-600 mb-6">Apakah Anda yakin ingin keluar dari sistem admin?</p>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="closeLogoutModal()" class="px-3 py-1.5 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition text-xs">Batal</button>
+                    <button onclick="confirmLogout()" class="px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs">Ya, Keluar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toastNotification" class="toast-notification hidden">
+            <div class="toast-content">
+                <div class="toast-icon">
+                    <span id="toastIcon">✓</span>
+                </div>
+                <div class="toast-message">
+                    <p id="toastMessage">Pesan notifikasi</p>
+                </div>
+                <button onclick="hideToast()" class="toast-close">×</button>
+            </div>
+        </div>
+
+        <!-- Modal Upload JSON -->
+        <div id="uploadJsonModal" class="modal-overlay hidden">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="text-xl font-semibold text-gray-800">Upload Soal JSON</h3>
+                    <button onclick="closeUploadModal()" class="modal-close-btn">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Pilih File JSON</label>
+                        <input type="file" id="jsonFileInput" accept=".json" class="form-input">
+                        <p class="text-sm text-gray-500 mt-1">Format JSON yang didukung: array of questions</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Atau Paste JSON Manual</label>
+                        <textarea id="jsonTextInput" class="form-textarea" rows="8" placeholder='[{"question": "Pertanyaan 1", "options": ["A", "B", "C", "D"], "correct": 0, "explanation": "Penjelasan"}]'></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="closeUploadModal()" class="px-3 py-1.5 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition text-xs">Batal</button>
+                    <button onclick="uploadJsonQuestions()" class="px-3 py-1.5 bg-green-500 text-white rounded hover:bg-green-600 transition text-xs">Upload Soal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding-bottom: 100px;
+        }
+
+        /* Navigation styles - hanya style untuk navigation bar */
+        .bg-white {
+            background-color: white;
+        }
+
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .max-w-7xl {
+            max-width: 80rem;
+        }
+
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .px-3 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .space-x-6 > * + * {
+            margin-left: 1.5rem;
+        }
+
+        .space-x-3 > * + * {
+            margin-left: 0.75rem;
+        }
+
+        .text-blue-600 {
+            color: #000000;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .border-b-2 {
+            border-bottom-width: 2px;
+        }
+
+        .border-blue-600 {
+            border-color: #2563eb;
+        }
+
+        .pb-1 {
+            padding-bottom: 0.25rem;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        .text-gray-600 {
+            color: #000000;
+        }
+
+        .hover\:text-blue-600:hover {
+            color: #000000;
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        .transition-colors {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        .bg-blue-600 {
+            background-color: #2563eb;
+        }
+
+        .hover\:bg-blue-700:hover {
+            background-color: #1d4ed8;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .py-1 {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+
+        .px-3 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .duration-200 {
+            transition-duration: 200ms;
+        }
+
+        .w-3 {
+            width: 0.75rem;
+        }
+
+        .h-3 {
+            height: 0.75rem;
+        }
+
+        .mr-1 {
+            margin-right: 0.25rem;
+        }
+
+        /* Additional classes untuk navigation bar */
+        .text-lg {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        /* Responsive styles untuk navigation */
+        @media (max-width: 768px) {
+            .space-x-6 > * + * {
+                margin-left: 1rem;
+            }
+
+            .space-x-3 > * + * {
+                margin-left: 0.5rem;
+            }
+
+            .max-w-7xl {
+                max-width: 100%;
+            }
+
+            .px-3 {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .py-2 {
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+        }
+
+        /* Navigation fixes */
+        .navbar {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 60px;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000000;
+            text-decoration: none;
+        }
+
+        .nav-subtitle {
+            font-size: 0.875rem;
+            color: #000000;
+            margin-top: 0.25rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6;
+        }
+
+        /* Additional Tailwind classes for navbar */
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .bg-red-500 {
+            background-color: #ef4444;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        .rounded {
+            border-radius: 0.25rem;
+        }
+
+        .hover\:bg-red-600:hover {
+            background-color: #dc2626;
+        }
+
+        .transition {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        /* Container fixes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 0.5rem;
+        }
+
+        /* Header styles */
+        /* Header responsive spacing */
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .sm\:mb-8 {
+            margin-bottom: 2rem;
+        }
+
+        .text-2xl {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+
+        .sm\:text-3xl {
+            font-size: 1.875rem;
+            line-height: 2.25rem;
+        }
+
+        .lg\:text-4xl {
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+        }
+
+        .text-gray-900 {
+            color: #111827;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .sm\:text-base {
+            font-size: 1rem;
+            line-height: 1.5rem;
+        }
+
+        /* Responsive header spacing */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem 1.5rem;
+            }
+        }
+
+        @media (min-width: 641px) {
+            .container {
+                padding: 2rem 2rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                padding: 2.5rem 3rem;
+            }
+        }
+
+        /* Quick Navigation Cards */
+        .quick-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0.75rem;
+            margin: 1rem auto;
+            justify-content: center;
+            max-width: 600px;
+            padding: 0 0.5rem;
+        }
+
+        .quick-nav-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            color: #1e293b;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .quick-nav-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-color: #e2e8f0;
+        }
+
+        .quick-nav-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.375rem;
+            color: #1e293b;
+        }
+
+        .quick-nav-card p {
+            color: #64748b;
+            margin-bottom: 0.75rem;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .quick-nav-card a {
+            background: #3b82f6;
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-block;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .quick-nav-card a:hover {
+            background: #2563eb;
+        }
+
+        .quick-nav-card .icon {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            font-size: 1.25rem;
+            opacity: 0.4;
+        }
+
+        /* Tab Content fixes */
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2,
+        .card-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Button styles */
+        .btn-primary-action,
+        .btn-danger-action,
+        .btn-secondary-action {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary-action {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary-action:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger-action {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger-action:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary-action {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary-action:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .quick-nav-grid {
+                padding: 1rem 0.5rem;
+                margin: 1rem auto;
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+                max-width: 100%;
+            }
+
+            .quick-nav-card {
+                padding: 1rem;
+            }
+
+            .quick-nav-card h3 {
+                font-size: 1.125rem;
+            }
+
+            .card-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .tab-content {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-nav-grid {
+                padding: 0.5rem 0.25rem;
+                margin: 0.5rem auto;
+            }
+
+            .quick-nav-card {
+                padding: 0.5rem;
+            }
+
+            .quick-nav-card .icon {
+                font-size: 1rem;
+            }
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            color: #1e293b;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Footer styles */
+        .footer {
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            padding: 0.60rem 0;
+            margin-top: auto;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 0.60rem;
+            text-align: center;
+            color: #64748b;
+        }
+
+        /* Utility classes */
+        .p-6 {
+            padding: 1.5rem;
+        }
+
+        .text-gray-500 {
+            color: #6b7280;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        /* Toast Notification Styles */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
+            max-width: 400px;
+            min-width: 300px;
+        }
+
+        .toast-notification.hidden {
+            display: none;
+        }
+
+        .toast-content {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-left: 4px solid #10b981;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .toast-content.success {
+            border-left-color: #10b981;
+        }
+
+        .toast-content.error {
+            border-left-color: #ef4444;
+        }
+
+        .toast-content.warning {
+            border-left-color: #f59e0b;
+        }
+
+        .toast-content.info {
+            border-left-color: #3b82f6;
+        }
+
+        .toast-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .toast-content.success .toast-icon {
+            background: #10b981;
+        }
+
+        .toast-content.error .toast-icon {
+            background: #ef4444;
+        }
+
+        .toast-content.warning .toast-icon {
+            background: #f59e0b;
+        }
+
+        .toast-content.info .toast-icon {
+            background: #3b82f6;
+        }
+
+        .toast-message {
+            flex: 1;
+        }
+
+        .toast-message p {
+            margin: 0;
+            color: #374151;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            color: #374151;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive toast */
+        @media (max-width: 480px) {
+            .toast-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                min-width: auto;
+            }
+        }
+    </style>
+
+
+    
+    <script>
+        // Simple admin dashboard - no complex functions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Replace %DISPLAY_NAME% with actual user name from Firebase
+            const adminNameElement = document.getElementById('adminName');
+            if (adminNameElement) {
+                // Try to get user data from various possible storage locations
+                const userData = localStorage.getItem('loggedInUser') || 
+                               localStorage.getItem('currentUser') || 
+                               localStorage.getItem('userName') || 
+                               localStorage.getItem('displayName') ||
+                               localStorage.getItem('firebaseUserData') ||
+                               sessionStorage.getItem('loggedInUser') ||
+                               sessionStorage.getItem('currentUser') ||
+                               sessionStorage.getItem('displayName') ||
+                               sessionStorage.getItem('firebaseUserData');
+                
+                let displayName = 'User';
+                
+                if (userData && userData !== '%DISPLAY_NAME%') {
+                    try {
+                        // Try to parse as JSON first
+                        const parsedData = JSON.parse(userData);
+                        
+                        // Priority order for Firebase field names - Full Name first!
+                        if (parsedData['Full Name']) {
+                            displayName = parsedData['Full Name'];
+                        } else if (parsedData.fullName) {
+                            displayName = parsedData.fullName;
+                        } else if (parsedData.full_name) {
+                            displayName = parsedData.full_name;
+                        } else if (parsedData.name) {
+                            displayName = parsedData.name;
+                        } else if (parsedData.username) {
+                            displayName = parsedData.username;
+                        } else if (parsedData.role) {
+                            displayName = parsedData.role;
+                        }
+                    } catch (e) {
+                        // If not JSON, use as plain text
+                        displayName = userData;
+                    }
+                }
+                
+                // Check if name contains "Bahlil" and force admin name
+                if (displayName.includes('Bahlil')) {
+                    displayName = 'Candra Kurniawan, M. Pd';
+                    // Also update localStorage with correct data
+                    const adminData = {
+                        "username": "admin",
+                        "role": "Administrator", 
+                        "Full Name": "Candra Kurniawan, M. Pd",
+                        "class": "Admin"
+                    };
+                    localStorage.setItem('loggedInUser', JSON.stringify(adminData));
+                    localStorage.setItem('currentUser', JSON.stringify(adminData));
+                    localStorage.setItem('firebaseUserData', JSON.stringify(adminData));
+                }
+                
+                // Update the display name
+                adminNameElement.textContent = displayName;
+            }
+        });
+
+        // Function to set user data from Firebase (bisa dipanggil dari halaman login)
+        function setLoggedInUser(userData) {
+            // Clear old data first
+            localStorage.removeItem('loggedInUser');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('firebaseUserData');
+            
+            // If userData is a string, try to parse it
+            let parsedData = userData;
+            if (typeof userData === 'string') {
+                try {
+                    parsedData = JSON.parse(userData);
+                } catch (e) {
+                    // If not JSON, treat as plain text
+                    parsedData = { 'Full Name': userData };
+                }
+            }
+            
+            // Store in multiple formats for compatibility
+            localStorage.setItem('loggedInUser', JSON.stringify(parsedData));
+            localStorage.setItem('currentUser', JSON.stringify(parsedData));
+            localStorage.setItem('firebaseUserData', JSON.stringify(parsedData));
+            
+            // Get display name - prioritize Full Name!
+            const displayName = parsedData['Full Name'] || parsedData.fullName || parsedData.full_name || parsedData.name || parsedData.username || parsedData.role || 'User';
+            
+            // Update display immediately
+            const adminNameElement = document.getElementById('adminName');
+            if (adminNameElement) {
+                adminNameElement.textContent = displayName;
+            }
+            
+            // Show success message
+            showMessage(`Login berhasil! Selamat datang, ${displayName}.`, 'success');
+            
+            return displayName;
+        }
+
+        // Simple logout function
+        function logout() {
+            console.log('Logging out and clearing all user data...');
+            
+            // Clear session storage (all user data is stored here)
+            sessionStorage.clear();
+            
+            console.log('All user data cleared, redirecting to login...');
+            window.location.href = 'index.html';
+        }
+
+        // Simple modal functions
+        function showLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function confirmLogout() {
+            closeLogoutModal();
+            logout();
+        }
+
+        // Toast notification functions
+        function showMessage(message, type = 'success') {
+            const toast = document.getElementById('toastNotification');
+            const toastContent = toast.querySelector('.toast-content');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            // Set message
+            toastMessage.textContent = message;
+            
+            // Set icon based on type
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+            toastIcon.textContent = icons[type] || '✓';
+            
+            // Set type class
+            toastContent.className = `toast-content ${type}`;
+            
+            // Show toast
+            toast.classList.remove('hidden');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                hideToast();
+            }, 5000);
+        }
+
+        function hideToast() {
+            const toast = document.getElementById('toastNotification');
+            const toastContent = toast.querySelector('.toast-content');
+            
+            // Add slide out animation
+            toastContent.style.animation = 'slideOutRight 0.3s ease-in';
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toastContent.style.animation = 'slideInRight 0.3s ease-out';
+            }, 300);
+        }
+
+        // Function to clear all data
+        function clearAllData() {
+            localStorage.clear();
+            sessionStorage.clear();
+            console.log('All data cleared!');
+        }
+
+        // Function to set admin data
+        function setAdminData() {
+            // Clear all data first
+            clearAllData();
+            
+            const adminData = {
+                "username": "admin",
+                "role": "Administrator", 
+                "Full Name": "Candra Kurniawan, M. Pd",
+                "class": "Admin"
+            };
+            
+            // Store new data
+            localStorage.setItem('loggedInUser', JSON.stringify(adminData));
+            localStorage.setItem('currentUser', JSON.stringify(adminData));
+            localStorage.setItem('firebaseUserData', JSON.stringify(adminData));
+            
+            // Update display immediately
+            const adminNameElement = document.getElementById('adminName');
+            if (adminNameElement) {
+                adminNameElement.textContent = adminData['Full Name'];
+            }
+            
+            console.log('Admin data set:', adminData);
+            showMessage(`Login berhasil! Selamat datang, ${adminData['Full Name']}.`, 'success');
+        }
+
+        // Function to force update name
+        function forceUpdateName() {
+            const adminNameElement = document.getElementById('adminName');
+            if (adminNameElement) {
+                adminNameElement.textContent = "Candra Kurniawan, M. Pd";
+                console.log('Name forced to update!');
+            }
+        }
+
+        // Auto-update name on page load
+        setTimeout(() => {
+            const adminNameElement = document.getElementById('adminName');
+            if (adminNameElement && adminNameElement.textContent !== "Candra Kurniawan, M. Pd") {
+                forceUpdateName();
+            }
+        }, 1000);
+
+        // Function to completely reset and set admin name
+        function resetToAdmin() {
+            // Clear everything
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Set admin data
+            const adminData = {
+                "username": "admin",
+                "role": "Administrator", 
+                "Full Name": "Candra Kurniawan, M. Pd",
+                "class": "Admin"
+            };
+            
+            // Store in all possible keys
+            localStorage.setItem('loggedInUser', JSON.stringify(adminData));
+            localStorage.setItem('currentUser', JSON.stringify(adminData));
+            localStorage.setItem('firebaseUserData', JSON.stringify(adminData));
+            localStorage.setItem('userName', JSON.stringify(adminData));
+            localStorage.setItem('displayName', JSON.stringify(adminData));
+            
+            // Force update display
+            const adminNameElement = document.getElementById('adminName');
+            if (adminNameElement) {
+                adminNameElement.textContent = "Candra Kurniawan, M. Pd";
+            }
+            
+            console.log('Reset to admin completed!');
+            showMessage('Data admin berhasil direset!', 'success');
+        }
+
+        // Auto-reset on page load if name is still wrong
+        setTimeout(() => {
+            const adminNameElement = document.getElementById('adminName');
+            if (adminNameElement && adminNameElement.textContent.includes('Bahlil')) {
+                console.log('Detected Bahlil, resetting to admin...');
+                resetToAdmin();
+            }
+        }, 2000);
+
+
+
+
+    </script>
+</body>
+</html>
